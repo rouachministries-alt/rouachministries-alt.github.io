@@ -2,55 +2,115 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7313613931904605" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz de culture biblique</title>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7313613931904605" crossorigin="anonymous"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
   body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #4a3f9e, #6d5bd0);
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #392f7a, #6d5bd0 55%, #8b6fe0);
     min-height: 100vh;
     margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 80px 20px 20px 20px;
+  }
+
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 22px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+  .top-bar .marque {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+    opacity: 0.95;
+  }
+  .top-bar .horloge {
+    font-weight: 500;
+    font-size: 13px;
+    opacity: 0.9;
+    text-align: right;
+  }
+  @media (max-width: 480px) {
+    .top-bar { font-size: 12px; padding: 10px 14px; }
+    .top-bar .marque { font-size: 13px; }
+    .top-bar .horloge { font-size: 11px; }
+  }
+
+  .fond-decoratif {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .fond-decoratif svg {
+    position: absolute;
+    opacity: 0.14;
   }
   .card {
     background: white;
-    border-radius: 16px;
-    padding: 32px;
+    border-radius: 20px;
+    padding: 36px;
     max-width: 520px;
     width: 100%;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
     overflow: hidden;
     position: relative;
+    z-index: 1;
   }
   h1 {
     text-align: center;
-    color: #4a3f9e;
+    color: #392f7a;
     margin-top: 0;
+    font-weight: 800;
   }
-  p.rules { color: #444; line-height: 1.5; }
+  p.rules { color: #444; line-height: 1.6; }
   .btn {
     display: block;
     width: 100%;
-    padding: 14px;
+    padding: 15px;
     margin: 10px 0;
     border: none;
-    border-radius: 10px;
-    background: #4a3f9e;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4a3f9e, #6d5bd0);
     color: white;
     font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 14px rgba(74, 63, 158, 0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
   }
-  .btn:hover { background: #6d5bd0; transform: translateY(-2px); }
-  .btn.choice { background: #f2f0fb; color: #333; text-align: left; }
-  .btn.choice:hover { background: #e0dcf7; }
-  .btn.choice.correct { background: #4caf50 !important; color: white !important; }
-  .btn.choice.wrong { background: #e53935 !important; color: white !important; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(74, 63, 158, 0.4); }
+  .btn.choice { background: #f2f0fb; color: #333; text-align: left; box-shadow: none; font-weight: 500; }
+  .btn.choice:hover { background: #e0dcf7; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .btn.choice.correct { background: linear-gradient(135deg, #43a047, #66bb6a) !important; color: white !important; }
+  .btn.choice.wrong { background: linear-gradient(135deg, #e53935, #ef5350) !important; color: white !important; }
   #question-number { color: #888; font-size: 14px; margin-bottom: 4px; }
+  #question-emoji { text-align: center; font-size: 48px; margin: 8px 0 4px 0; }
   #question-text { font-size: 19px; font-weight: 600; margin-bottom: 20px; color: #222; }
   #feedback { margin-top: 14px; font-weight: 600; min-height: 24px; }
   .score-line { text-align: center; font-size: 20px; margin: 16px 0; color: #4a3f9e; font-weight: 700; }
@@ -101,6 +161,39 @@
 </head>
 <body>
 
+<div class="fond-decoratif">
+  <svg width="70" height="100" viewBox="0 0 70 100" style="top:6%; left:5%; transform: rotate(-12deg);">
+    <rect x="27" y="0" width="16" height="100" fill="white"/>
+    <rect x="0" y="30" width="70" height="16" fill="white"/>
+  </svg>
+  <svg width="50" height="72" viewBox="0 0 50 72" style="bottom:10%; left:8%; transform: rotate(15deg);">
+    <rect x="19" y="0" width="12" height="72" fill="white"/>
+    <rect x="0" y="22" width="50" height="12" fill="white"/>
+  </svg>
+  <svg width="60" height="86" viewBox="0 0 60 86" style="top:12%; right:6%; transform: rotate(10deg);">
+    <rect x="23" y="0" width="14" height="86" fill="white"/>
+    <rect x="0" y="26" width="60" height="14" fill="white"/>
+  </svg>
+  <svg width="45" height="64" viewBox="0 0 45 64" style="bottom:8%; right:10%; transform: rotate(-18deg);">
+    <rect x="17" y="0" width="11" height="64" fill="white"/>
+    <rect x="0" y="20" width="45" height="11" fill="white"/>
+  </svg>
+  <svg width="40" height="40" viewBox="0 0 24 24" style="top:45%; left:3%;">
+    <path fill="white" d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7.1L12 17.8l-6.2 3.5L7 14.2 2 9.3l7.1-0.7z"/>
+  </svg>
+  <svg width="34" height="34" viewBox="0 0 24 24" style="top:60%; right:4%;">
+    <path fill="white" d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7.1L12 17.8l-6.2 3.5L7 14.2 2 9.3l7.1-0.7z"/>
+  </svg>
+  <svg width="28" height="28" viewBox="0 0 24 24" style="top:20%; left:45%;">
+    <path fill="white" d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7.1L12 17.8l-6.2 3.5L7 14.2 2 9.3l7.1-0.7z"/>
+  </svg>
+</div>
+
+<div class="top-bar">
+  <span class="marque">✝️ rouachministries</span>
+  <span class="horloge" id="horloge"></span>
+</div>
+
 <div class="card">
 
   <!-- PAGE D'ACCUEIL -->
@@ -142,10 +235,12 @@
     <div id="question-content">
       <div id="question-number"></div>
       <div class="chrono" id="chrono"></div>
+      <div id="question-emoji"></div>
       <div id="question-text"></div>
       <div id="choix-container"></div>
       <div id="feedback"></div>
       <div class="streak" id="streak"></div>
+      <button class="btn hidden" id="bouton-passer" onclick="passerMaintenant()" style="background:#888;">⏭ Passer</button>
     </div>
   </div>
 
@@ -162,37 +257,37 @@
 <script>
 const questions = {
   facile: [
-    {question: "Qui a reçu les dix commandements ?", choix: {a:"Isaac", b:"Moïse", c:"Noé"}, reponse: "b", explication: "Moïse a reçu les dix commandements sur le mont Sinaï (Exode 20)."},
-    {question: "Dans quelle ville Jésus est-il né ?", choix: {a:"Jérusalem", b:"Bethléem", c:"Nazareth"}, reponse: "b", explication: "Jésus est né à Bethléem, selon les évangiles de Matthieu et Luc."},
-    {question: "Qui a été jeté dans la fosse aux lions ?", choix: {a:"Paul", b:"Joseph", c:"Daniel"}, reponse: "c", explication: "Daniel fut jeté dans la fosse aux lions et Dieu le protégea (Daniel 6)."},
-    {question: "Quel est le dernier livre de la Bible ?", choix: {a:"Genèse", b:"Matthieu", c:"Apocalypse"}, reponse: "c", explication: "L'Apocalypse, écrite par l'apôtre Jean, clôt le Nouveau Testament."},
-    {question: "Combien d'apôtres Jésus avait-il ?", choix: {a:"10", b:"12", c:"3"}, reponse: "b", explication: "Jésus avait douze apôtres, ses disciples les plus proches."},
-    {question: "Qui était la mère de Jésus ?", choix: {a:"Marie", b:"Ruth", c:"Marthe"}, reponse: "a", explication: "Marie, épouse de Joseph, était la mère de Jésus."},
-    {question: "Quel jeune berger a vaincu le géant philistin nommé Goliath ?", choix: {a:"Joseph", b:"Samson", c:"David"}, reponse: "c", explication: "David vainquit Goliath avec une fronde (1 Samuel 17)."},
-    {question: "Quel apôtre a renié Jésus trois fois avant que le coq ne chante ?", choix: {a:"Pierre", b:"Thomas", c:"Jean"}, reponse: "a", explication: "Pierre renia Jésus trois fois avant le chant du coq (Matthieu 26)."},
-    {question: "Quel premier homme Dieu a-t-il créé et placé dans le jardin d'Éden ?", choix: {a:"Lot", b:"Adam", c:"Jacob"}, reponse: "b", explication: "Adam fut le premier homme, placé par Dieu dans le jardin d'Éden (Genèse 2)."},
+    {question: "Qui a reçu les dix commandements ?", choix: {a:"Isaac", b:"Moïse", c:"Noé"}, reponse: "b", explication: "Moïse a reçu les dix commandements sur le mont Sinaï (Exode 20).", emoji: "📜"},
+    {question: "Dans quelle ville Jésus est-il né ?", choix: {a:"Jérusalem", b:"Bethléem", c:"Nazareth"}, reponse: "b", explication: "Jésus est né à Bethléem, selon les évangiles de Matthieu et Luc.", emoji: "⭐"},
+    {question: "Qui a été jeté dans la fosse aux lions ?", choix: {a:"Paul", b:"Joseph", c:"Daniel"}, reponse: "c", explication: "Daniel fut jeté dans la fosse aux lions et Dieu le protégea (Daniel 6).", emoji: "🦁"},
+    {question: "Quel est le dernier livre de la Bible ?", choix: {a:"Genèse", b:"Matthieu", c:"Apocalypse"}, reponse: "c", explication: "L'Apocalypse, écrite par l'apôtre Jean, clôt le Nouveau Testament.", emoji: "📖"},
+    {question: "Combien d'apôtres Jésus avait-il ?", choix: {a:"10", b:"12", c:"3"}, reponse: "b", explication: "Jésus avait douze apôtres, ses disciples les plus proches.", emoji: "👥"},
+    {question: "Qui était la mère de Jésus ?", choix: {a:"Marie", b:"Ruth", c:"Marthe"}, reponse: "a", explication: "Marie, épouse de Joseph, était la mère de Jésus.", emoji: "🙏"},
+    {question: "Quel jeune berger a vaincu le géant philistin nommé Goliath ?", choix: {a:"Joseph", b:"Samson", c:"David"}, reponse: "c", explication: "David vainquit Goliath avec une fronde (1 Samuel 17).", emoji: "🪨"},
+    {question: "Quel apôtre a renié Jésus trois fois avant que le coq ne chante ?", choix: {a:"Pierre", b:"Thomas", c:"Jean"}, reponse: "a", explication: "Pierre renia Jésus trois fois avant le chant du coq (Matthieu 26).", emoji: "🐓"},
+    {question: "Quel premier homme Dieu a-t-il créé et placé dans le jardin d'Éden ?", choix: {a:"Lot", b:"Adam", c:"Jacob"}, reponse: "b", explication: "Adam fut le premier homme, placé par Dieu dans le jardin d'Éden (Genèse 2).", emoji: "🌳"},
   ],
   moyen: [
-    {question: "Quel homme a été avalé par un grand poisson ?", choix: {a:"Amos", b:"Jonas", c:"Josué"}, reponse: "b", explication: "Jonas fut avalé par un grand poisson après avoir fui sa mission à Ninive."},
-    {question: "Dans quel fleuve Naaman s'est-il lavé sept fois pour guérir de sa lèpre ?", choix: {a:"Le Nil", b:"Jourdain", c:"Le Tigre"}, reponse: "b", explication: "Naaman se lava sept fois dans le Jourdain et fut guéri (2 Rois 5)."},
-    {question: "Qui était la femme de Moïse ?", choix: {a:"Déborah", b:"Ruth", c:"Séphora"}, reponse: "c", explication: "Séphora, fille de Jéthro, était l'épouse de Moïse."},
-    {question: "Quel nom Dieu donne-t-il à Jacob après sa lutte avec un ange ?", choix: {a:"Israël", b:"Abraham", c:"Isaac"}, reponse: "a", explication: "Jacob reçut le nom d'Israël après sa lutte avec l'ange (Genèse 32)."},
-    {question: "Qui a dit : « Quant à moi et ma maison, nous servirons l'Éternel » ?", choix: {a:"Élie", b:"Josué", c:"Samuel"}, reponse: "b", explication: "Josué prononça cette déclaration de fidélité (Josué 24)."},
-    {question: "Combien de temps les Israélites ont-ils erré dans le désert ?", choix: {a:"40 ans", b:"30 ans", c:"50 ans"}, reponse: "a", explication: "Les Israélites errèrent 40 ans dans le désert avant d'entrer en Terre promise."},
-    {question: "Quel juge d'Israël était connu pour sa grande force ?", choix: {a:"Samuel", b:"Jephté", c:"Samson"}, reponse: "c", explication: "Samson, juge d'Israël, était réputé pour sa force extraordinaire."},
-    {question: "Sur quelle île l'apôtre Jean a-t-il reçu les visions de l'Apocalypse ?", choix: {a:"Chypre", b:"Malte", c:"Patmos"}, reponse: "c", explication: "Jean reçut les visions de l'Apocalypse en exil sur l'île de Patmos."},
-    {question: "Quel roi d'Israël a fait assassiner Urie le Hitite pour épouser Bethsabée ?", choix: {a:"Jéroboam", b:"David", c:"Salomon"}, reponse: "b", explication: "Le roi David fit tuer Urie pour épouser Bethsabée (2 Samuel 11)."},
+    {question: "Quel homme a été avalé par un grand poisson ?", choix: {a:"Amos", b:"Jonas", c:"Josué"}, reponse: "b", explication: "Jonas fut avalé par un grand poisson après avoir fui sa mission à Ninive.", emoji: "🐋"},
+    {question: "Dans quel fleuve Naaman s'est-il lavé sept fois pour guérir de sa lèpre ?", choix: {a:"Le Nil", b:"Jourdain", c:"Le Tigre"}, reponse: "b", explication: "Naaman se lava sept fois dans le Jourdain et fut guéri (2 Rois 5).", emoji: "🌊"},
+    {question: "Qui était la femme de Moïse ?", choix: {a:"Déborah", b:"Ruth", c:"Séphora"}, reponse: "c", explication: "Séphora, fille de Jéthro, était l'épouse de Moïse.", emoji: "💍"},
+    {question: "Quel nom Dieu donne-t-il à Jacob après sa lutte avec un ange ?", choix: {a:"Israël", b:"Abraham", c:"Isaac"}, reponse: "a", explication: "Jacob reçut le nom d'Israël après sa lutte avec l'ange (Genèse 32).", emoji: "🕊️"},
+    {question: "Qui a dit : « Quant à moi et ma maison, nous servirons l'Éternel » ?", choix: {a:"Élie", b:"Josué", c:"Samuel"}, reponse: "b", explication: "Josué prononça cette déclaration de fidélité (Josué 24).", emoji: "⚔️"},
+    {question: "Combien de temps les Israélites ont-ils erré dans le désert ?", choix: {a:"40 ans", b:"30 ans", c:"50 ans"}, reponse: "a", explication: "Les Israélites errèrent 40 ans dans le désert avant d'entrer en Terre promise.", emoji: "🏜️"},
+    {question: "Quel juge d'Israël était connu pour sa grande force ?", choix: {a:"Samuel", b:"Jephté", c:"Samson"}, reponse: "c", explication: "Samson, juge d'Israël, était réputé pour sa force extraordinaire.", emoji: "💪"},
+    {question: "Sur quelle île l'apôtre Jean a-t-il reçu les visions de l'Apocalypse ?", choix: {a:"Chypre", b:"Malte", c:"Patmos"}, reponse: "c", explication: "Jean reçut les visions de l'Apocalypse en exil sur l'île de Patmos.", emoji: "🏝️"},
+    {question: "Quel roi d'Israël a fait assassiner Urie le Hitite pour épouser Bethsabée ?", choix: {a:"Jéroboam", b:"David", c:"Salomon"}, reponse: "b", explication: "Le roi David fit tuer Urie pour épouser Bethsabée (2 Samuel 11).", emoji: "👑"},
   ],
   difficile: [
-    {question: "Quel roi d'Israël a transféré la capitale du royaume du Nord à Samarie ?", choix: {a:"Jéhu", b:"Achab", c:"Omri"}, reponse: "c", explication: "Le roi Omri fonda Samarie comme nouvelle capitale (1 Rois 16)."},
-    {question: "Quel apôtre a été mordu par une vipère sur l'île de Malte sans subir de mal ?", choix: {a:"Paul", b:"Pierre", c:"Jean"}, reponse: "a", explication: "Paul fut mordu par une vipère à Malte sans en être affecté (Actes 28)."},
-    {question: "Quel personnage biblique a été appelé « homme selon le cœur de Dieu » ?", choix: {a:"David", b:"Philippe", c:"Moïse"}, reponse: "a", explication: "David fut appelé « homme selon le cœur de Dieu » (1 Samuel 13)."},
-    {question: "Quel prophète a épousé une femme infidèle nommée Gomer ?", choix: {a:"Amos", b:"Osée", c:"Michée"}, reponse: "b", explication: "Osée épousa Gomer pour illustrer l'infidélité d'Israël envers Dieu."},
-    {question: "Qui était le roi de Salem et prêtre du Dieu Très-Haut ayant béni Abram ?", choix: {a:"Jethro", b:"Potiphar", c:"Melchisédech"}, reponse: "c", explication: "Melchisédech, roi de Salem, bénit Abram après sa victoire (Genèse 14)."},
-    {question: "Quel prophète a eu la vision de la vallée des ossements desséchés ?", choix: {a:"Zacharie", b:"Ézéchiel", c:"Ésaïe"}, reponse: "b", explication: "Ézéchiel eut la vision de la vallée des ossements desséchés (Ézéchiel 37)."},
-    {question: "Qui était le père du roi David ?", choix: {a:"Boaz", b:"Isaï", c:"Obed"}, reponse: "b", explication: "Isaï, de Bethléem, était le père du roi David."},
-    {question: "Dans quelle ville les disciples ont-ils été appelés « chrétiens » pour la première fois ?", choix: {a:"Jérusalem", b:"Éphèse", c:"Antioche"}, reponse: "c", explication: "C'est à Antioche que les disciples furent appelés « chrétiens » pour la première fois (Actes 11)."},
-    {question: "Quel prophète a assisté au combat contre les prophètes de Baal sur le mont Carmel ?", choix: {a:"Ésaïe", b:"Élie", c:"Élisée"}, reponse: "b", explication: "Élie affronta les prophètes de Baal sur le mont Carmel (1 Rois 18)."},
+    {question: "Quel roi d'Israël a transféré la capitale du royaume du Nord à Samarie ?", choix: {a:"Jéhu", b:"Achab", c:"Omri"}, reponse: "c", explication: "Le roi Omri fonda Samarie comme nouvelle capitale (1 Rois 16).", emoji: "🏛️"},
+    {question: "Quel apôtre a été mordu par une vipère sur l'île de Malte sans subir de mal ?", choix: {a:"Paul", b:"Pierre", c:"Jean"}, reponse: "a", explication: "Paul fut mordu par une vipère à Malte sans en être affecté (Actes 28).", emoji: "🐍"},
+    {question: "Quel personnage biblique a été appelé « homme selon le cœur de Dieu » ?", choix: {a:"David", b:"Philippe", c:"Moïse"}, reponse: "a", explication: "David fut appelé « homme selon le cœur de Dieu » (1 Samuel 13).", emoji: "❤️"},
+    {question: "Quel prophète a épousé une femme infidèle nommée Gomer ?", choix: {a:"Amos", b:"Osée", c:"Michée"}, reponse: "b", explication: "Osée épousa Gomer pour illustrer l'infidélité d'Israël envers Dieu.", emoji: "💔"},
+    {question: "Qui était le roi de Salem et prêtre du Dieu Très-Haut ayant béni Abram ?", choix: {a:"Jethro", b:"Potiphar", c:"Melchisédech"}, reponse: "c", explication: "Melchisédech, roi de Salem, bénit Abram après sa victoire (Genèse 14).", emoji: "🍞"},
+    {question: "Quel prophète a eu la vision de la vallée des ossements desséchés ?", choix: {a:"Zacharie", b:"Ézéchiel", c:"Ésaïe"}, reponse: "b", explication: "Ézéchiel eut la vision de la vallée des ossements desséchés (Ézéchiel 37).", emoji: "🦴"},
+    {question: "Qui était le père du roi David ?", choix: {a:"Boaz", b:"Isaï", c:"Obed"}, reponse: "b", explication: "Isaï, de Bethléem, était le père du roi David.", emoji: "👨‍👦"},
+    {question: "Dans quelle ville les disciples ont-ils été appelés « chrétiens » pour la première fois ?", choix: {a:"Jérusalem", b:"Éphèse", c:"Antioche"}, reponse: "c", explication: "C'est à Antioche que les disciples furent appelés « chrétiens » pour la première fois (Actes 11).", emoji: "🏙️"},
+    {question: "Quel prophète a assisté au combat contre les prophètes de Baal sur le mont Carmel ?", choix: {a:"Ésaïe", b:"Élie", c:"Élisée"}, reponse: "b", explication: "Élie affronta les prophètes de Baal sur le mont Carmel (1 Rois 18).", emoji: "🔥"},
   ],
 };
 
@@ -208,6 +303,17 @@ let meilleureSerie = 0;
 let minuteurId = null;
 let tempsRestant = 10;
 let directionTransition = "gauche";
+let idAttentePassage = null;
+
+function mettreAJourHorloge() {
+  const maintenant = new Date();
+  const optionsDate = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+  const dateStr = maintenant.toLocaleDateString("fr-FR", optionsDate);
+  const heureStr = maintenant.toLocaleTimeString("fr-FR");
+  document.getElementById("horloge").innerText = dateStr + " — " + heureStr;
+}
+mettreAJourHorloge();
+setInterval(mettreAJourHorloge, 1000);
 
 function lire(texte, quandTermine) {
   if (!('speechSynthesis' in window)) {
@@ -312,9 +418,11 @@ function afficherQuestion() {
 
   const q = listeQuestions[indexQuestion];
   document.getElementById("question-number").innerText = "Question " + (indexQuestion + 1) + " / " + listeQuestions.length;
+  document.getElementById("question-emoji").innerText = q.emoji || "";
   document.getElementById("question-text").innerText = q.question;
   document.getElementById("feedback").innerText = "";
   document.getElementById("streak").innerText = "";
+  document.getElementById("bouton-passer").classList.add("hidden");
   const chronoEl = document.getElementById("chrono");
   chronoEl.classList.add("chrono-invisible");
   chronoEl.classList.remove("chrono-orange", "chrono-rouge");
@@ -340,22 +448,34 @@ function afficherQuestion() {
   lire(phraseVocale, demarrerChrono);
 }
 
-function passerALaSuite(delai) {
-  setTimeout(() => {
-    const contenu = document.getElementById("question-content");
-    const directions = ["gauche", "haut", "bas"];
-    directionTransition = directions[Math.floor(Math.random() * directions.length)];
-    contenu.classList.add("sortie-" + directionTransition);
+function avancerQuestion() {
+  const contenu = document.getElementById("question-content");
+  const directions = ["gauche", "haut", "bas"];
+  directionTransition = directions[Math.floor(Math.random() * directions.length)];
+  contenu.classList.add("sortie-" + directionTransition);
 
-    setTimeout(() => {
-      indexQuestion++;
-      if (indexQuestion < listeQuestions.length) {
-        afficherQuestion();
-      } else {
-        terminerQuiz();
-      }
-    }, 350); // laisse le temps à l'animation de sortie de se jouer
-  }, delai);
+  setTimeout(() => {
+    indexQuestion++;
+    if (indexQuestion < listeQuestions.length) {
+      afficherQuestion();
+    } else {
+      terminerQuiz();
+    }
+  }, 350); // laisse le temps à l'animation de sortie de se jouer
+}
+
+function passerALaSuite(delai) {
+  idAttentePassage = setTimeout(avancerQuestion, delai);
+}
+
+function passerMaintenant() {
+  if (idAttentePassage) {
+    clearTimeout(idAttentePassage);
+    idAttentePassage = null;
+  }
+  window.speechSynthesis.cancel();
+  document.getElementById("bouton-passer").classList.add("hidden");
+  avancerQuestion();
 }
 
 function tempsEcoule() {
@@ -381,6 +501,7 @@ function tempsEcoule() {
   const nombreMots = texteALire.split(" ").length;
   const delaiCalcule = Math.max(3500, nombreMots * 550);
 
+  document.getElementById("bouton-passer").classList.remove("hidden");
   passerALaSuite(delaiCalcule);
 }
 
@@ -423,6 +544,7 @@ function repondre(lettreChoisie, btnClique) {
   const nombreMots = texteALire.split(" ").length;
   const delaiCalcule = Math.max(3500, nombreMots * 550);
 
+  document.getElementById("bouton-passer").classList.remove("hidden");
   passerALaSuite(delaiCalcule);
 }
 
