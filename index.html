@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz de culture biblique</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #4a3f9e, #6d5bd0);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    overflow: hidden;
+    position: relative;
+  }
+  h1 {
+    text-align: center;
+    color: #4a3f9e;
+    margin-top: 0;
+  }
+  p.rules { color: #444; line-height: 1.5; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    background: #4a3f9e;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn:hover { background: #6d5bd0; transform: translateY(-2px); }
+  .btn.choice { background: #f2f0fb; color: #333; text-align: left; }
+  .btn.choice:hover { background: #e0dcf7; }
+  .btn.choice.correct { background: #4caf50 !important; color: white !important; }
+  .btn.choice.wrong { background: #e53935 !important; color: white !important; }
+  #question-number { color: #888; font-size: 14px; margin-bottom: 4px; }
+  #question-text { font-size: 19px; font-weight: 600; margin-bottom: 20px; color: #222; }
+  #feedback { margin-top: 14px; font-weight: 600; min-height: 24px; }
+  .score-line { text-align: center; font-size: 20px; margin: 16px 0; color: #4a3f9e; font-weight: 700; }
+  .hidden { display: none; }
+  .level-label { font-weight: 600; color: #6d5bd0; text-align: center; margin-bottom: 12px; }
+  .progress-bar-bg { background: #eee; border-radius: 8px; height: 10px; overflow: hidden; margin-bottom: 16px; }
+  .progress-bar-fill { background: linear-gradient(90deg, #4a3f9e, #6d5bd0); height: 100%; transition: width 0.3s; }
+  .streak { text-align: center; color: #ff9800; font-weight: 700; margin-top: 8px; min-height: 20px; }
+  .accueil-icone { display: block; margin: 0 auto 8px auto; }
+  .chrono {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 6px solid #4a3f9e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: #4a3f9e;
+    margin: 0 auto 16px auto;
+    background: #f2f0fb;
+    transition: border-color 0.3s, color 0.3s, opacity 0.2s;
+    opacity: 1;
+  }
+  .chrono.chrono-invisible { opacity: 0; }
+  .chrono.chrono-orange { border-color: #ff9800; color: #ff9800; background: #fff4e5; }
+  .chrono.chrono-rouge { border-color: #e53935; color: #e53935; background: #fdecea; animation: pulseChrono 0.6s infinite; }
+  @keyframes pulseChrono {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+  }
+
+  @keyframes sortieGauche { to { transform: translateX(-100%); } }
+  @keyframes sortieHaut { to { transform: translateY(-100%); } }
+  @keyframes sortieBas { to { transform: translateY(100%); } }
+  @keyframes entreeDroite { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes entreeBas { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes entreeHaut { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+  .sortie-gauche { animation: sortieGauche 0.35s ease forwards; }
+  .sortie-haut { animation: sortieHaut 0.35s ease forwards; }
+  .sortie-bas { animation: sortieBas 0.35s ease forwards; }
+  .entree-droite { animation: entreeDroite 0.4s ease forwards; }
+  .entree-bas { animation: entreeBas 0.4s ease forwards; }
+  .entree-haut { animation: entreeHaut 0.4s ease forwards; }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- PAGE D'ACCUEIL -->
+  <div id="accueil">
+    <svg class="accueil-icone" width="90" height="70" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 15 C40 5, 15 5, 5 12 L5 65 C15 58, 40 58, 50 68 Z" fill="#6d5bd0"/>
+      <path d="M50 15 C60 5, 85 5, 95 12 L95 65 C85 58, 60 58, 50 68 Z" fill="#4a3f9e"/>
+      <line x1="50" y1="18" x2="50" y2="66" stroke="#ffd700" stroke-width="3"/>
+      <line x1="12" y1="22" x2="42" y2="18" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <line x1="12" y1="30" x2="42" y2="26" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <line x1="12" y1="38" x2="42" y2="34" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <line x1="58" y1="18" x2="88" y2="22" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <line x1="58" y1="26" x2="88" y2="30" stroke="white" stroke-width="1.5" opacity="0.6"/>
+      <line x1="58" y1="34" x2="88" y2="38" stroke="white" stroke-width="1.5" opacity="0.6"/>
+    </svg>
+    <h1>🎉 Quiz de culture biblique</h1>
+    <p class="rules">
+      Règles du jeu :<br>
+      • Choisis un niveau : facile, moyen ou difficile<br>
+      • Réponds aux questions à choix multiple sur la Bible<br>
+      • Enchaîne les bonnes réponses pour faire une série 🔥<br>
+      • À la fin, ton score s'affiche et tu peux rejouer
+    </p>
+    <button class="btn" onclick="commencer()">▶️ Commencer</button>
+  </div>
+
+  <!-- CHOIX DU NIVEAU -->
+  <div id="choix-niveau" class="hidden">
+    <h1>Choisis ton niveau</h1>
+    <button class="btn" onclick="choisirNiveau('facile')">1 - Facile</button>
+    <button class="btn" onclick="choisirNiveau('moyen')">2 - Moyen</button>
+    <button class="btn" onclick="choisirNiveau('difficile')">3 - Difficile</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="jeu" class="hidden">
+    <div class="level-label" id="level-label"></div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div></div>
+    <div id="question-content">
+      <div id="question-number"></div>
+      <div class="chrono" id="chrono"></div>
+      <div id="question-text"></div>
+      <div id="choix-container"></div>
+      <div id="feedback"></div>
+      <div class="streak" id="streak"></div>
+    </div>
+  </div>
+
+  <!-- FIN DE PARTIE -->
+  <div id="fin" class="hidden">
+    <h1>Score final</h1>
+    <div class="score-line" id="score-final"></div>
+    <button class="btn" onclick="rejouerMemeNiveau()">🔁 Rejouer ce niveau</button>
+    <button class="btn" onclick="retourNiveaux()">📋 Changer de niveau</button>
+  </div>
+
+</div>
+
+<script>
+const questions = {
+  facile: [
+    {question: "Qui a reçu les dix commandements ?", choix: {a:"Isaac", b:"Moïse", c:"Noé"}, reponse: "b", explication: "Moïse a reçu les dix commandements sur le mont Sinaï (Exode 20)."},
+    {question: "Dans quelle ville Jésus est-il né ?", choix: {a:"Jérusalem", b:"Bethléem", c:"Nazareth"}, reponse: "b", explication: "Jésus est né à Bethléem, selon les évangiles de Matthieu et Luc."},
+    {question: "Qui a été jeté dans la fosse aux lions ?", choix: {a:"Paul", b:"Joseph", c:"Daniel"}, reponse: "c", explication: "Daniel fut jeté dans la fosse aux lions et Dieu le protégea (Daniel 6)."},
+    {question: "Quel est le dernier livre de la Bible ?", choix: {a:"Genèse", b:"Matthieu", c:"Apocalypse"}, reponse: "c", explication: "L'Apocalypse, écrite par l'apôtre Jean, clôt le Nouveau Testament."},
+    {question: "Combien d'apôtres Jésus avait-il ?", choix: {a:"10", b:"12", c:"3"}, reponse: "b", explication: "Jésus avait douze apôtres, ses disciples les plus proches."},
+    {question: "Qui était la mère de Jésus ?", choix: {a:"Marie", b:"Ruth", c:"Marthe"}, reponse: "a", explication: "Marie, épouse de Joseph, était la mère de Jésus."},
+    {question: "Quel jeune berger a vaincu le géant philistin nommé Goliath ?", choix: {a:"Joseph", b:"Samson", c:"David"}, reponse: "c", explication: "David vainquit Goliath avec une fronde (1 Samuel 17)."},
+    {question: "Quel apôtre a renié Jésus trois fois avant que le coq ne chante ?", choix: {a:"Pierre", b:"Thomas", c:"Jean"}, reponse: "a", explication: "Pierre renia Jésus trois fois avant le chant du coq (Matthieu 26)."},
+    {question: "Quel premier homme Dieu a-t-il créé et placé dans le jardin d'Éden ?", choix: {a:"Lot", b:"Adam", c:"Jacob"}, reponse: "b", explication: "Adam fut le premier homme, placé par Dieu dans le jardin d'Éden (Genèse 2)."},
+  ],
+  moyen: [
+    {question: "Quel homme a été avalé par un grand poisson ?", choix: {a:"Amos", b:"Jonas", c:"Josué"}, reponse: "b", explication: "Jonas fut avalé par un grand poisson après avoir fui sa mission à Ninive."},
+    {question: "Dans quel fleuve Naaman s'est-il lavé sept fois pour guérir de sa lèpre ?", choix: {a:"Le Nil", b:"Jourdain", c:"Le Tigre"}, reponse: "b", explication: "Naaman se lava sept fois dans le Jourdain et fut guéri (2 Rois 5)."},
+    {question: "Qui était la femme de Moïse ?", choix: {a:"Déborah", b:"Ruth", c:"Séphora"}, reponse: "c", explication: "Séphora, fille de Jéthro, était l'épouse de Moïse."},
+    {question: "Quel nom Dieu donne-t-il à Jacob après sa lutte avec un ange ?", choix: {a:"Israël", b:"Abraham", c:"Isaac"}, reponse: "a", explication: "Jacob reçut le nom d'Israël après sa lutte avec l'ange (Genèse 32)."},
+    {question: "Qui a dit : « Quant à moi et ma maison, nous servirons l'Éternel » ?", choix: {a:"Élie", b:"Josué", c:"Samuel"}, reponse: "b", explication: "Josué prononça cette déclaration de fidélité (Josué 24)."},
+    {question: "Combien de temps les Israélites ont-ils erré dans le désert ?", choix: {a:"40 ans", b:"30 ans", c:"50 ans"}, reponse: "a", explication: "Les Israélites errèrent 40 ans dans le désert avant d'entrer en Terre promise."},
+    {question: "Quel juge d'Israël était connu pour sa grande force ?", choix: {a:"Samuel", b:"Jephté", c:"Samson"}, reponse: "c", explication: "Samson, juge d'Israël, était réputé pour sa force extraordinaire."},
+    {question: "Sur quelle île l'apôtre Jean a-t-il reçu les visions de l'Apocalypse ?", choix: {a:"Chypre", b:"Malte", c:"Patmos"}, reponse: "c", explication: "Jean reçut les visions de l'Apocalypse en exil sur l'île de Patmos."},
+    {question: "Quel roi d'Israël a fait assassiner Urie le Hitite pour épouser Bethsabée ?", choix: {a:"Jéroboam", b:"David", c:"Salomon"}, reponse: "b", explication: "Le roi David fit tuer Urie pour épouser Bethsabée (2 Samuel 11)."},
+  ],
+  difficile: [
+    {question: "Quel roi d'Israël a transféré la capitale du royaume du Nord à Samarie ?", choix: {a:"Jéhu", b:"Achab", c:"Omri"}, reponse: "c", explication: "Le roi Omri fonda Samarie comme nouvelle capitale (1 Rois 16)."},
+    {question: "Quel apôtre a été mordu par une vipère sur l'île de Malte sans subir de mal ?", choix: {a:"Paul", b:"Pierre", c:"Jean"}, reponse: "a", explication: "Paul fut mordu par une vipère à Malte sans en être affecté (Actes 28)."},
+    {question: "Quel personnage biblique a été appelé « homme selon le cœur de Dieu » ?", choix: {a:"David", b:"Philippe", c:"Moïse"}, reponse: "a", explication: "David fut appelé « homme selon le cœur de Dieu » (1 Samuel 13)."},
+    {question: "Quel prophète a épousé une femme infidèle nommée Gomer ?", choix: {a:"Amos", b:"Osée", c:"Michée"}, reponse: "b", explication: "Osée épousa Gomer pour illustrer l'infidélité d'Israël envers Dieu."},
+    {question: "Qui était le roi de Salem et prêtre du Dieu Très-Haut ayant béni Abram ?", choix: {a:"Jethro", b:"Potiphar", c:"Melchisédech"}, reponse: "c", explication: "Melchisédech, roi de Salem, bénit Abram après sa victoire (Genèse 14)."},
+    {question: "Quel prophète a eu la vision de la vallée des ossements desséchés ?", choix: {a:"Zacharie", b:"Ézéchiel", c:"Ésaïe"}, reponse: "b", explication: "Ézéchiel eut la vision de la vallée des ossements desséchés (Ézéchiel 37)."},
+    {question: "Qui était le père du roi David ?", choix: {a:"Boaz", b:"Isaï", c:"Obed"}, reponse: "b", explication: "Isaï, de Bethléem, était le père du roi David."},
+    {question: "Dans quelle ville les disciples ont-ils été appelés « chrétiens » pour la première fois ?", choix: {a:"Jérusalem", b:"Éphèse", c:"Antioche"}, reponse: "c", explication: "C'est à Antioche que les disciples furent appelés « chrétiens » pour la première fois (Actes 11)."},
+    {question: "Quel prophète a assisté au combat contre les prophètes de Baal sur le mont Carmel ?", choix: {a:"Ésaïe", b:"Élie", c:"Élisée"}, reponse: "b", explication: "Élie affronta les prophètes de Baal sur le mont Carmel (1 Rois 18)."},
+  ],
+};
+
+let questionsDejaPosees = { facile: [], moyen: [], difficile: [] };
+let niveauActuel = null;
+let listeQuestions = [];
+let indexQuestion = 0;
+let score = 0;
+let enAttente = false;
+let serie = 0;
+let meilleureSerie = 0;
+
+let minuteurId = null;
+let tempsRestant = 10;
+let directionTransition = "gauche";
+
+function lire(texte, quandTermine) {
+  if (!('speechSynthesis' in window)) {
+    if (quandTermine) quandTermine();
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(texte);
+  utterance.lang = "fr-FR";
+  if (quandTermine) utterance.onend = quandTermine;
+  window.speechSynthesis.speak(utterance);
+}
+
+function demarrerChrono() {
+  tempsRestant = 10;
+  const chronoEl = document.getElementById("chrono");
+  chronoEl.classList.remove("chrono-invisible");
+  mettreAJourAffichageChrono();
+  clearInterval(minuteurId);
+  minuteurId = setInterval(() => {
+    tempsRestant--;
+    mettreAJourAffichageChrono();
+    if (tempsRestant <= 0) {
+      clearInterval(minuteurId);
+      tempsEcoule();
+    }
+  }, 1000);
+}
+
+function mettreAJourAffichageChrono() {
+  const chronoEl = document.getElementById("chrono");
+  chronoEl.innerText = tempsRestant;
+  chronoEl.classList.remove("chrono-orange", "chrono-rouge");
+  if (tempsRestant <= 3) {
+    chronoEl.classList.add("chrono-rouge");
+  } else if (tempsRestant <= 6) {
+    chronoEl.classList.add("chrono-orange");
+  }
+}
+
+function arreterChrono() {
+  clearInterval(minuteurId);
+  const chronoEl = document.getElementById("chrono");
+  chronoEl.classList.add("chrono-invisible");
+  chronoEl.classList.remove("chrono-orange", "chrono-rouge");
+  chronoEl.innerText = "";
+}
+
+function afficher(id) {
+  ["accueil", "choix-niveau", "jeu", "fin"].forEach(x => {
+    document.getElementById(x).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function commencer() {
+  const messageVocal = "Bienvenue au quiz de culture biblique ! Tu vas devoir répondre à des questions à choix multiple sur la Bible. Choisis d'abord un niveau : facile, moyen ou difficile. Que la sagesse de Dieu t'accompagne au nom de notre Seigneur Jésus-Christ !";
+  lire(messageVocal);
+  afficher("choix-niveau");
+}
+
+function melanger(tableau) {
+  const copie = [...tableau];
+  for (let i = copie.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copie[i], copie[j]] = [copie[j], copie[i]];
+  }
+  return copie;
+}
+
+function choisirNiveau(niveau) {
+  niveauActuel = niveau;
+  const NOMBRE_QUESTIONS_PAR_PARTIE = 5;
+  let restantes = questions[niveau].filter(q => !questionsDejaPosees[niveau].includes(q));
+
+  // S'il ne reste pas assez de questions "neuves", on relance le stock complet du niveau
+  if (restantes.length < NOMBRE_QUESTIONS_PAR_PARTIE) {
+    questionsDejaPosees[niveau] = [];
+    restantes = questions[niveau];
+  }
+
+  const nb = Math.min(NOMBRE_QUESTIONS_PAR_PARTIE, restantes.length);
+  listeQuestions = melanger(restantes).slice(0, nb);
+  indexQuestion = 0;
+  score = 0;
+  serie = 0;
+  meilleureSerie = 0;
+
+  document.getElementById("level-label").innerText = "Niveau : " + niveauActuel;
+  afficher("jeu");
+  afficherQuestion();
+}
+
+function afficherQuestion() {
+  enAttente = false;
+
+  const contenu = document.getElementById("question-content");
+  contenu.classList.remove("sortie-gauche", "sortie-haut", "sortie-bas", "entree-droite", "entree-bas", "entree-haut");
+  void contenu.offsetWidth; // force le navigateur à repartir de zéro avant de rejouer l'animation
+  const classeEntree = directionTransition === "gauche" ? "entree-droite" : directionTransition === "haut" ? "entree-bas" : "entree-haut";
+  contenu.classList.add(classeEntree);
+
+  const q = listeQuestions[indexQuestion];
+  document.getElementById("question-number").innerText = "Question " + (indexQuestion + 1) + " / " + listeQuestions.length;
+  document.getElementById("question-text").innerText = q.question;
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("streak").innerText = "";
+  const chronoEl = document.getElementById("chrono");
+  chronoEl.classList.add("chrono-invisible");
+  chronoEl.classList.remove("chrono-orange", "chrono-rouge");
+  chronoEl.innerText = "";
+
+  const pourcentage = (indexQuestion / listeQuestions.length) * 100;
+  document.getElementById("progress-bar-fill").style.width = pourcentage + "%";
+
+  const container = document.getElementById("choix-container");
+  container.innerHTML = "";
+
+  let phraseVocale = "Question " + (indexQuestion + 1) + " : " + q.question;
+
+  Object.entries(q.choix).forEach(([lettre, texte]) => {
+    phraseVocale += ". " + lettre + ") " + texte;
+    const btn = document.createElement("button");
+    btn.className = "btn choice";
+    btn.innerText = lettre.toUpperCase() + ") " + texte;
+    btn.onclick = () => repondre(lettre, btn);
+    container.appendChild(btn);
+  });
+
+  lire(phraseVocale, demarrerChrono);
+}
+
+function passerALaSuite(delai) {
+  setTimeout(() => {
+    const contenu = document.getElementById("question-content");
+    const directions = ["gauche", "haut", "bas"];
+    directionTransition = directions[Math.floor(Math.random() * directions.length)];
+    contenu.classList.add("sortie-" + directionTransition);
+
+    setTimeout(() => {
+      indexQuestion++;
+      if (indexQuestion < listeQuestions.length) {
+        afficherQuestion();
+      } else {
+        terminerQuiz();
+      }
+    }, 350); // laisse le temps à l'animation de sortie de se jouer
+  }, delai);
+}
+
+function tempsEcoule() {
+  if (enAttente) return;
+  enAttente = true;
+
+  const q = listeQuestions[indexQuestion];
+  const boutons = document.querySelectorAll("#choix-container .btn.choice");
+  serie = 0;
+
+  boutons.forEach(b => {
+    b.disabled = true;
+    if (b.innerText.toLowerCase().startsWith(q.reponse)) b.classList.add("correct");
+  });
+
+  const bonneReponseTexte = q.choix[q.reponse];
+  document.getElementById("feedback").innerHTML = "⏰ Temps écoulé ! La bonne réponse était : " + bonneReponseTexte + "<br><span style='font-weight:400; color:#555;'>💡 " + q.explication + "</span>";
+  const texteALire = "Temps écoulé ! La bonne réponse était " + bonneReponseTexte + ". " + q.explication;
+  lire([`Temps écoulé ! La bonne réponse était ${bonneReponseTexte}`, q.explication]);
+
+  questionsDejaPosees[niveauActuel].push(q);
+
+  const nombreMots = texteALire.split(" ").length;
+  const delaiCalcule = Math.max(3500, nombreMots * 550);
+
+  passerALaSuite(delaiCalcule);
+}
+
+function repondre(lettreChoisie, btnClique) {
+  if (enAttente) return;
+  enAttente = true;
+  arreterChrono();
+
+  const q = listeQuestions[indexQuestion];
+  const boutons = document.querySelectorAll("#choix-container .btn.choice");
+  boutons.forEach(b => b.disabled = true);
+
+  let texteALire = "";
+  if (lettreChoisie === q.reponse) {
+    btnClique.classList.add("correct");
+    serie++;
+    meilleureSerie = Math.max(meilleureSerie, serie);
+    document.getElementById("feedback").innerHTML = "✅ Bonne réponse !<br><span style='font-weight:400; color:#555;'>💡 " + q.explication + "</span>";
+    if (serie >= 2) {
+      document.getElementById("streak").innerText = "🔥 Série de " + serie + " bonnes réponses !";
+    }
+    texteALire = "Bonne réponse ! " + q.explication;
+    lire(["Bonne réponse !", q.explication]);
+    score++;
+  } else {
+    btnClique.classList.add("wrong");
+    serie = 0;
+    boutons.forEach(b => {
+      if (b.innerText.toLowerCase().startsWith(q.reponse)) b.classList.add("correct");
+    });
+    const bonneReponseTexte = q.choix[q.reponse];
+    document.getElementById("feedback").innerHTML = "❌ Faux, la bonne réponse était : " + bonneReponseTexte + "<br><span style='font-weight:400; color:#555;'>💡 " + q.explication + "</span>";
+    texteALire = "Faux, la bonne réponse était " + bonneReponseTexte + ". " + q.explication;
+    lire([`Faux, la bonne réponse était ${bonneReponseTexte}`, q.explication]);
+  }
+
+  questionsDejaPosees[niveauActuel].push(q);
+
+  // Le délai s'adapte à la longueur du texte lu, pour laisser le temps à la voix de finir
+  const nombreMots = texteALire.split(" ").length;
+  const delaiCalcule = Math.max(3500, nombreMots * 550);
+
+  passerALaSuite(delaiCalcule);
+}
+
+function terminerQuiz() {
+  document.getElementById("score-final").innerHTML = "Score : " + score + " / " + listeQuestions.length + "<br><span style='font-size:16px; color:#ff9800;'>🔥 Meilleure série : " + meilleureSerie + "</span>";
+  lire("Score final : " + score + " sur " + listeQuestions.length);
+  afficher("fin");
+}
+
+function rejouerMemeNiveau() {
+  choisirNiveau(niveauActuel);
+}
+
+function retourNiveaux() {
+  afficher("choix-niveau");
+}
+</script>
+
+</body>
+</html>
