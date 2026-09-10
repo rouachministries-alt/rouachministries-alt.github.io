@@ -541,9 +541,10 @@ function basculerModeSombre() {
 
 // --- Partage du score ---
 function partagerScore() {
-  const texte = `J'ai fait ${score}/${listeQuestions.length} au Quiz de culture biblique (niveau ${niveauActuel}) ! Essaie de faire mieux 😊`;
+  const lienJeu = "https://rouachministries-alt.github.io";
+  const texte = `J'ai fait ${score}/${listeQuestions.length} au Quiz de culture biblique (niveau ${niveauActuel}) ! Essaie de faire mieux 😊 ${lienJeu}`;
   if (navigator.share) {
-    navigator.share({ text: texte }).catch(() => {});
+    navigator.share({ text: texte, url: lienJeu }).catch(() => {});
   } else {
     window.open("https://wa.me/?text=" + encodeURIComponent(texte), "_blank");
   }
