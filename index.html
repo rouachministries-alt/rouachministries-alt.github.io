@@ -635,6 +635,15 @@ mettreAJourHorloge();
 setInterval(mettreAJourHorloge, 1000);
 appliquerModeSombre();
 
+// Filet de sécurité global : si une erreur JavaScript imprévue survient quelque part,
+// on l'ignore silencieusement au lieu de laisser le jeu se figer complètement
+window.addEventListener("error", function (e) {
+  console.warn("Erreur interceptée (le jeu continue) :", e.message);
+});
+window.addEventListener("unhandledrejection", function (e) {
+  console.warn("Promesse rejetée interceptée (le jeu continue) :", e.reason);
+});
+
 // Sécurité : si l'animation bloque pour une raison quelconque (onglet en arrière-plan, etc.),
 // on force la disparition de l'écran de chargement après 6 secondes maximum
 const secoursSplash = setTimeout(() => {
@@ -696,12 +705,53 @@ const secoursSplash = setTimeout(() => {
 })();
 
 function lire(texte, quandTermine) {
+  const texteFinal = Array.isArray(texte) ? texte.join(". ") : texte;
+
+  // Sur l'application mobile (Capacitor), on utilise le moteur vocal natif d'Android,
+  // beaucoup plus fiable que la voix du navigateur dans une WebView
+  const estAppliNative = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+
+  if (estAppliNative && window.Capacitor.Plugins && window.Capacitor.Plugins.TextToSpeech) {
+    try {
+      const { TextToSpeech } = window.Capacitor.Plugins;
+      let dejaAppele = false;
+      const appelerUneFois = () => {
+        if (dejaAppele) return;
+        dejaAppele = true;
+        if (quandTermine) quandTermine();
+      };
+      // Sécurité : si la voix native ne répond jamais, on continue quand même le jeu après 8 secondes max
+      const secoursVoix = setTimeout(appelerUneFois, 8000);
+
+      TextToSpeech.stop().catch(() => {});
+      TextToSpeech.speak({
+        text: texteFinal,
+        lang: "fr-FR",
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 1.0,
+        category: "ambient"
+      }).then(() => {
+        clearTimeout(secoursVoix);
+        appelerUneFois();
+      }).catch(() => {
+        clearTimeout(secoursVoix);
+        appelerUneFois();
+      });
+    } catch (e) {
+      // Si l'appel à la voix native plante complètement, on continue quand même le jeu
+      if (quandTermine) quandTermine();
+    }
+    return;
+  }
+
+  // Sur le web (navigateur), on garde la voix classique du navigateur
   if (!('speechSynthesis' in window)) {
     if (quandTermine) quandTermine();
     return;
   }
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(texte);
+  const utterance = new SpeechSynthesisUtterance(texteFinal);
   utterance.lang = "fr-FR";
   if (quandTermine) utterance.onend = quandTermine;
   window.speechSynthesis.speak(utterance);
