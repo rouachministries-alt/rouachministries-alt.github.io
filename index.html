@@ -4,10 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiz de culture biblique</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#392f7a">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rouachministries">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7313613931904605" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Playfair+Display:ital@1&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
   body {
@@ -260,6 +266,364 @@
     color: #333;
   }
   body.sombre .badge-item { background: #2a2545; color: #eee; }
+
+  /* ===== Mots mêlés bibliques (intégré) ===== */
+  :root{
+    --mm-ink: #352a86;
+    --mm-ink-soft: #6b60a8;
+    --mm-purple-a: #4b3aa4;
+    --mm-purple-b: #7160dd;
+    --mm-lav-a: #b3a9f5;
+    --mm-lav-b: #9585ea;
+    --mm-orange-a: #ffb84d;
+    --mm-orange-b: #ff9d2e;
+    --mm-teal-a: #4dd0c0;
+    --mm-teal-b: #2fb3a3;
+    --mm-card: #ffffff;
+    --mm-surface-1: #f2f0fc;
+    --mm-surface-2: #f7f6ff;
+    --mm-surface-done: #eefaf7;
+    --mm-grid-border: #e3defb;
+    --mm-winbg1: #fff8ea;
+    --mm-winbg2: #ffffff;
+    --mm-winborder: #ffe3ae;
+  }
+  body.sombre{
+    --mm-ink: #f1ecff;
+    --mm-ink-soft: #c3b8ec;
+    --mm-card: #241c48;
+    --mm-surface-1: #332a63;
+    --mm-surface-2: #2c2456;
+    --mm-surface-done: #1f3d3a;
+    --mm-grid-border: #3d3270;
+    --mm-winbg1: #2e2456;
+    --mm-winbg2: #241c48;
+    --mm-winborder: #4a3c86;
+  }
+
+  .mm-toast{
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-24px);
+    background: #241c48;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 4100;
+    white-space: nowrap;
+  }
+  .mm-toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .mm-modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,70,0.55);
+    backdrop-filter: blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index: 4000;
+    padding: 16px;
+  }
+  .mm-modal-overlay.hidden{ display: none; }
+  .mm-modal-card{
+    background: var(--mm-card);
+    border-radius: 24px;
+    max-width: 380px;
+    width: 100%;
+    padding: 28px 24px 24px;
+    text-align:center;
+    box-shadow: 0 30px 60px -20px rgba(30,15,80,0.5);
+  }
+  .mm-modal-card h2{
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--mm-ink);
+    margin: 0 0 14px;
+  }
+  .mm-modal-icon{ font-size: 38px; margin-bottom: 8px; }
+  .mm-modal-icon-svg{ display:block; margin: 0 auto 8px; }
+  .mm-modal-verse{
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--mm-ink);
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .mm-modal-ref{
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--mm-orange-b);
+    margin-bottom: 16px;
+    letter-spacing: 0.3px;
+  }
+  .mm-modal-msg{
+    font-size: 14px;
+    color: var(--mm-ink-soft);
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .mm-scores-list, .mm-badges-list{
+    max-height: 320px;
+    overflow-y: auto;
+    text-align: left;
+    margin-bottom: 16px;
+  }
+  .mm-score-group-title{
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--mm-ink);
+    margin: 12px 0 6px;
+  }
+  .mm-score-group-title:first-child{ margin-top: 0; }
+  .mm-score-row{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: var(--mm-surface-2);
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mm-ink-soft);
+  }
+  .mm-score-row .mm-score-time{
+    color: var(--mm-ink);
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+  }
+  .mm-score-row.has-score{ background: var(--mm-surface-done); }
+
+  .mm-badge-row{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--mm-surface-2);
+    margin-bottom: 6px;
+  }
+  .mm-badge-row.earned{ background: var(--mm-surface-done); }
+  .mm-badge-row .mm-badge-icon{
+    font-size: 24px;
+    width: 36px; height:36px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    flex-shrink: 0;
+  }
+  .mm-badge-row.earned .mm-badge-icon{ background: linear-gradient(135deg, var(--mm-orange-a), var(--mm-orange-b)); }
+  .mm-badge-row:not(.earned) .mm-badge-icon{ filter: grayscale(1); opacity: 0.5; }
+  .mm-badge-row .mm-badge-info .mm-name{
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--mm-ink);
+  }
+  .mm-badge-row .mm-badge-info .mm-desc{
+    font-size: 11px;
+    color: var(--mm-ink-soft);
+    font-weight: 600;
+  }
+
+  .mm-card-icons{
+    display:flex;
+    justify-content:flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .mm-icon-btn{
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 14px -6px rgba(255,157,46,0.6);
+  }
+  .mm-icon-btn.mm-orange{ background: linear-gradient(135deg, var(--mm-orange-a), var(--mm-orange-b)); }
+  .mm-icon-btn.mm-soft{ background: var(--mm-surface-1); color: var(--mm-ink); box-shadow:none; }
+
+  .mm-title-block{
+    text-align:center;
+    margin-bottom: 14px;
+  }
+  .mm-title-icon-svg{ display:block; margin: 0 auto 6px; }
+  .mm-title-block h1{
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--mm-ink);
+    margin: 4px 0 4px;
+  }
+  .mm-subtitle{
+    color: var(--mm-ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mm-tabs{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content:center;
+    margin: 16px 0 12px;
+  }
+  .mm-tab{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--mm-ink);
+    background: var(--mm-surface-1);
+    border: none;
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .mm-tab.active{
+    color: #fff;
+    background: linear-gradient(135deg, var(--mm-purple-a), var(--mm-purple-b));
+  }
+
+  .mm-levels{
+    display:flex;
+    justify-content:center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .mm-level-pill{
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--mm-orange-a), var(--mm-orange-b));
+    border: none;
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .mm-level-pill.inactive{ background: var(--mm-surface-1); color: var(--mm-ink-soft); }
+  .mm-level-pill.completed.inactive{ background: var(--mm-surface-done); color: var(--mm-teal-b); }
+  .mm-level-pill.locked{ background: var(--mm-surface-1); color: var(--mm-ink-soft); opacity: 0.6; cursor: not-allowed; }
+
+  .mm-mode-row{ display:flex; justify-content:center; margin-bottom: 16px; }
+  .mm-mode-toggle{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--mm-ink-soft);
+    background: var(--mm-surface-1);
+    border: none;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+  }
+  .mm-mode-toggle.active{ color: #fff; background: linear-gradient(135deg, var(--mm-teal-a), var(--mm-teal-b)); }
+
+  .mm-board{
+    display:flex;
+    gap: 18px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .mm-grid-wrap{ flex: 1 1 260px; max-width: 360px; }
+  .mm-grid{
+    display:grid;
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--mm-surface-1);
+    border: 2px solid var(--mm-grid-border);
+    user-select:none;
+    touch-action: none;
+  }
+  .mm-cell{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight: 700;
+    color: var(--mm-ink);
+    font-size: 15px;
+    border: 0.5px solid rgba(91,63,201,0.06);
+    cursor: pointer;
+  }
+  @media (hover:hover){
+    .mm-cell:hover{ background: rgba(91,63,201,0.08); }
+  }
+  .mm-cell.temp-select{ background: rgba(113,96,221,0.35); }
+  .mm-cell.found{ color: #fff; animation: mmFoundPulse 0.35s ease; }
+  .mm-cell.hint-flash{ animation: mmHintPulse 1.5s ease; }
+  @keyframes mmFoundPulse{ 0%{transform:scale(1);} 45%{transform:scale(1.18);} 100%{transform:scale(1);} }
+  @keyframes mmHintPulse{ 0%,100%{background:transparent;} 50%{background:rgba(255,157,46,0.55);} }
+
+  .mm-side{ flex: 1 1 220px; max-width: 260px; }
+  .mm-progress-block{ margin-bottom: 12px; }
+  .mm-progress-top{
+    display:flex; justify-content: space-between; align-items:center;
+    font-size: 12px; color: var(--mm-ink-soft); font-weight: 600; margin-bottom: 6px;
+  }
+  .mm-progress-top .mm-count{ font-weight: 700; color: var(--mm-ink); }
+  .mm-timer{ display:flex; align-items:center; gap: 5px; }
+  .mm-progress-bar{ height: 7px; border-radius: 999px; background: var(--mm-surface-1); overflow: hidden; }
+  .mm-progress-fill{
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--mm-orange-a), var(--mm-orange-b));
+    border-radius: 999px; transition: width 0.3s ease;
+  }
+
+  .mm-word-list{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .mm-word-list li{
+    font-size: 13px; font-weight: 700; color: var(--mm-ink);
+    padding: 6px 9px; border-radius: 9px; background: var(--mm-surface-2);
+    display:flex; align-items:center; gap: 8px;
+  }
+  .mm-word-list li .mm-swatch{ width: 8px; height:8px; border-radius: 50%; background: #cfc9f5; flex-shrink:0; }
+  .mm-word-list li.done{
+    color: var(--mm-ink-soft); text-decoration: line-through;
+    text-decoration-color: rgba(91,63,201,0.35); background: var(--mm-surface-done);
+  }
+
+  .mm-btn{
+    margin-top: 10px; width: 100%;
+    font-family:'Baloo 2', sans-serif; font-weight: 700; font-size: 13px;
+    color: #fff; background: linear-gradient(135deg, var(--mm-purple-a), var(--mm-purple-b));
+    border: none; border-radius: 12px; padding: 11px; cursor: pointer;
+  }
+  .mm-btn.secondary{ background: linear-gradient(135deg, var(--mm-lav-a), var(--mm-lav-b)); color: var(--mm-ink); }
+  .mm-btn.ghost{ background: var(--mm-surface-1); color: var(--mm-ink); }
+  .mm-btn:disabled{ opacity: 0.45; cursor: not-allowed; }
+
+  .mm-win-banner{
+    text-align:center; margin-top: 14px; display:none;
+    background: linear-gradient(135deg, var(--mm-winbg1), var(--mm-winbg2));
+    border-radius: 14px; padding: 14px 12px; border: 1px solid var(--mm-winborder);
+  }
+  .mm-win-banner.show{ display:block; }
+  .mm-win-banner .mm-msg{ font-family:'Baloo 2', sans-serif; font-size: 16px; color: var(--mm-orange-b); font-weight: 700; margin-bottom: 4px; }
+  .mm-win-banner .mm-time-msg{ font-size: 12px; color: var(--mm-ink-soft); font-weight: 600; margin-bottom: 8px; }
+
+  @media (max-width: 560px){
+    .mm-board{ flex-direction: column; }
+    .mm-side{ max-width: none; }
+    .mm-word-list{ flex-direction: row; flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
@@ -314,6 +678,8 @@
 
 <div class="copyright-watermark">©d_paluda</div>
 
+<div class="mm-toast" id="mmToast"></div>
+
 <div class="card">
 
   <!-- PAGE D'ACCUEIL -->
@@ -340,6 +706,7 @@
     <button class="btn" onclick="commencer()">▶️ Commencer</button>
     <button class="btn" style="background:linear-gradient(135deg, #6d5bd0, #8b6fe0);" onclick="ouvrirDefiDuJour()">📅 Défi du jour</button>
     <button class="btn" style="background:linear-gradient(135deg, #ff9800, #ffb74d);" onclick="afficherBadges()">🏅 Mes badges</button>
+    <button class="btn" style="background:linear-gradient(135deg, #4b3aa4, #7160dd);" onclick="ouvrirMotsMeles()">🧩 Mots mêlés bibliques</button>
   </div>
 
   <!-- CHOIX DE LA CATÉGORIE -->
@@ -396,6 +763,91 @@
     <div id="defi-contenu"></div>
   </div>
 
+  <!-- MOTS MÊLÉS BIBLIQUES -->
+  <div id="mots-meles" class="hidden">
+    <button class="btn" style="background:#888; margin-bottom:14px;" onclick="quitterMotsMeles()">⬅ Retour</button>
+
+    <div class="mm-card-icons">
+      <button class="mm-icon-btn mm-soft" id="mmSoundBtn" title="Son">🔊</button>
+      <button class="mm-icon-btn mm-orange" id="mmBadgesBtn" title="Mes badges">🏅</button>
+      <button class="mm-icon-btn mm-orange" id="mmScoresBtn" title="Meilleurs scores">🏆</button>
+    </div>
+
+    <div class="mm-title-block">
+      <svg class="mm-title-icon-svg" viewBox="0 0 120 100" width="54" height="45">
+        <path d="M10,20 C10,15 20,12 30,14 L58,20 L58,80 L30,74 C20,72 10,75 10,80 Z" fill="var(--mm-surface-1)" stroke="#4b3aa4" stroke-width="2.5"/>
+        <path d="M110,20 C110,15 100,12 90,14 L62,20 L62,80 L90,74 C100,72 110,75 110,80 Z" fill="var(--mm-surface-1)" stroke="#4b3aa4" stroke-width="2.5"/>
+        <line x1="60" y1="20" x2="60" y2="80" stroke="#ff9d2e" stroke-width="3"/>
+        <circle cx="88" cy="55" r="14" fill="none" stroke="#ff9d2e" stroke-width="4"/>
+        <line x1="98" y1="65" x2="110" y2="77" stroke="#ff9d2e" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <h1>Mots Mêlés Bibliques</h1>
+      <div class="mm-subtitle">retrouve les mots cachés dans la grille</div>
+    </div>
+
+    <div class="mm-tabs" id="mmTabs"></div>
+    <div class="mm-levels" id="mmLevels"></div>
+    <div class="mm-mode-row"><button class="mm-mode-toggle" id="mmTimedModeBtn">⏱️ Mode libre</button></div>
+
+    <div class="mm-board">
+      <div class="mm-grid-wrap"><div class="mm-grid" id="mmGrid"></div></div>
+      <div class="mm-side">
+        <div class="mm-progress-block">
+          <div class="mm-progress-top">
+            <span class="mm-timer">⏳ <span id="mmTimerNum">00:00</span></span>
+            <span class="mm-count" id="mmProgressCount">0 / 0</span>
+          </div>
+          <div class="mm-progress-bar"><div class="mm-progress-fill" id="mmProgressFill"></div></div>
+        </div>
+        <ul class="mm-word-list" id="mmWordList"></ul>
+        <button class="mm-btn ghost" id="mmHintBtn">💡 Indice (+15s)</button>
+        <button class="mm-btn secondary" id="mmNewGridBtn">Nouvelle grille</button>
+        <div class="mm-win-banner" id="mmWinBanner">
+          <div class="mm-msg" id="mmWinMsg">🎉 Grille complétée !</div>
+          <div class="mm-time-msg" id="mmWinTime"></div>
+          <button class="mm-btn" id="mmNextLevelBtn">Niveau suivant →</button>
+          <button class="mm-btn secondary" id="mmShareBtn">📤 Partager mon score</button>
+          <button class="mm-btn secondary" id="mmRetryBtn">🔁 Réessayer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="mm-modal-overlay hidden" id="mmWelcomeModal">
+  <div class="mm-modal-card">
+    <svg class="mm-modal-icon-svg" viewBox="0 0 120 100" width="72" height="60">
+      <path d="M10,20 C10,15 20,12 30,14 L58,20 L58,80 L30,74 C20,72 10,75 10,80 Z" fill="#ffffff" stroke="#4b3aa4" stroke-width="2.5"/>
+      <path d="M110,20 C110,15 100,12 90,14 L62,20 L62,80 L90,74 C100,72 110,75 110,80 Z" fill="#ffffff" stroke="#4b3aa4" stroke-width="2.5"/>
+      <line x1="60" y1="20" x2="60" y2="80" stroke="#ff9d2e" stroke-width="3"/>
+      <circle cx="88" cy="55" r="14" fill="none" stroke="#ff9d2e" stroke-width="4"/>
+      <line x1="98" y1="65" x2="110" y2="77" stroke="#ff9d2e" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+    <h2>Bienvenue !</h2>
+    <div class="mm-modal-verse">« Cherchez, et vous trouverez. »</div>
+    <div class="mm-modal-ref">MATTHIEU 7:7</div>
+    <div class="mm-modal-msg">Que ce moment de jeu soit aussi une occasion de méditer Sa Parole, un mot à la fois. Prêt(e) à chercher ?</div>
+    <button class="mm-btn" id="mmCloseWelcomeBtn">Commencer 🧩</button>
+  </div>
+</div>
+
+<div class="mm-modal-overlay hidden" id="mmScoresModal">
+  <div class="mm-modal-card">
+    <div class="mm-modal-icon">🏆</div>
+    <h2>Meilleurs scores</h2>
+    <div class="mm-scores-list" id="mmScoresList"></div>
+    <button class="mm-btn secondary" id="mmCloseScoresBtn">Fermer</button>
+  </div>
+</div>
+
+<div class="mm-modal-overlay hidden" id="mmBadgesModal">
+  <div class="mm-modal-card">
+    <div class="mm-modal-icon">🏅</div>
+    <h2>Mes badges</h2>
+    <div class="mm-badges-list" id="mmBadgesList"></div>
+    <button class="mm-btn secondary" id="mmCloseBadgesBtn">Fermer</button>
+  </div>
 </div>
 
 <script>
@@ -484,7 +936,6 @@ let idAttentePassage = null;
 
 const toutesQuestions = [...questions.facile, ...questions.moyen, ...questions.difficile];
 
-// --- Meilleur score (sauvegardé sur l'appareil) ---
 function obtenirMeilleurScore(niveau) {
   const val = localStorage.getItem("meilleurScore_" + niveau);
   return val ? parseInt(val, 10) : 0;
@@ -497,7 +948,6 @@ function sauvegarderMeilleurScoreSiRecord(niveau, scoreObtenu) {
   return false;
 }
 
-// --- Badges ---
 const CATALOGUE_BADGES = [
   { id: "premier_quiz", nom: "Premier quiz terminé", emoji: "🌟", condition: () => true },
   { id: "sans_faute", nom: "Sans faute", emoji: "💯", condition: (s, t) => s === t },
@@ -526,7 +976,6 @@ function afficherBadges() {
   afficher("mes-badges");
 }
 
-// --- Mode sombre ---
 let modeSombre = localStorage.getItem("modeSombre") === "1";
 function appliquerModeSombre() {
   document.body.classList.toggle("sombre", modeSombre);
@@ -539,7 +988,6 @@ function basculerModeSombre() {
   appliquerModeSombre();
 }
 
-// --- Partage du score ---
 function partagerScore() {
   const lienJeu = "https://rouachministries-alt.github.io";
   const texte = `J'ai fait ${score}/${listeQuestions.length} au Quiz de culture biblique (niveau ${niveauActuel}) ! Essaie de faire mieux 😊 ${lienJeu}`;
@@ -550,7 +998,6 @@ function partagerScore() {
   }
 }
 
-// --- Défi du jour ---
 function obtenirCleDuJour() {
   const auj = new Date();
   return auj.getFullYear() + "-" + (auj.getMonth() + 1) + "-" + auj.getDate();
@@ -635,8 +1082,6 @@ mettreAJourHorloge();
 setInterval(mettreAJourHorloge, 1000);
 appliquerModeSombre();
 
-// Filet de sécurité global : si une erreur JavaScript imprévue survient quelque part,
-// on l'ignore silencieusement au lieu de laisser le jeu se figer complètement
 window.addEventListener("error", function (e) {
   console.warn("Erreur interceptée (le jeu continue) :", e.message);
 });
@@ -644,8 +1089,6 @@ window.addEventListener("unhandledrejection", function (e) {
   console.warn("Promesse rejetée interceptée (le jeu continue) :", e.reason);
 });
 
-// Sécurité : si l'animation bloque pour une raison quelconque (onglet en arrière-plan, etc.),
-// on force la disparition de l'écran de chargement après 6 secondes maximum
 const secoursSplash = setTimeout(() => {
   const splash = document.getElementById("splash-screen");
   if (splash && !splash.classList.contains("termine")) {
@@ -654,7 +1097,6 @@ const secoursSplash = setTimeout(() => {
   }
 }, 6000);
 
-// Animation de l'écran de chargement (splash screen), avec deux pauses avant 100%
 (async function animerChargement() {
   try {
     const barre = document.getElementById("splash-barre-fill");
@@ -699,16 +1141,11 @@ const secoursSplash = setTimeout(() => {
     clearTimeout(secoursSplash);
     splash.classList.add("termine");
     setTimeout(() => { splash.style.display = "none"; }, 650);
-  } catch (e) {
-    // En cas d'erreur imprévue, le filet de sécurité de 6 secondes prendra le relais
-  }
+  } catch (e) {}
 })();
 
 function lire(texte, quandTermine) {
   const texteFinal = Array.isArray(texte) ? texte.join(". ") : texte;
-
-  // Sur l'application mobile (Capacitor), on utilise le moteur vocal natif d'Android,
-  // beaucoup plus fiable que la voix du navigateur dans une WebView
   const estAppliNative = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
 
   if (estAppliNative && window.Capacitor.Plugins && window.Capacitor.Plugins.TextToSpeech) {
@@ -720,7 +1157,6 @@ function lire(texte, quandTermine) {
         dejaAppele = true;
         if (quandTermine) quandTermine();
       };
-      // Sécurité : si la voix native ne répond jamais, on continue quand même le jeu après 8 secondes max
       const secoursVoix = setTimeout(appelerUneFois, 8000);
 
       TextToSpeech.stop().catch(() => {});
@@ -739,13 +1175,11 @@ function lire(texte, quandTermine) {
         appelerUneFois();
       });
     } catch (e) {
-      // Si l'appel à la voix native plante complètement, on continue quand même le jeu
       if (quandTermine) quandTermine();
     }
     return;
   }
 
-  // Sur le web (navigateur), on garde la voix classique du navigateur
   if (!('speechSynthesis' in window)) {
     if (quandTermine) quandTermine();
     return;
@@ -793,7 +1227,7 @@ function arreterChrono() {
 }
 
 function afficher(id) {
-  ["accueil", "choix-categorie", "choix-niveau", "jeu", "fin", "mes-badges", "defi-jour"].forEach(x => {
+  ["accueil", "choix-categorie", "choix-niveau", "jeu", "fin", "mes-badges", "defi-jour", "mots-meles"].forEach(x => {
     document.getElementById(x).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
@@ -825,11 +1259,10 @@ function choisirNiveau(niveau) {
   const NOMBRE_QUESTIONS_PAR_PARTIE = 5;
 
   let pool = questions[niveau].filter(q => categorieActuelle === "tout" || q.testament === categorieActuelle);
-  if (pool.length === 0) pool = questions[niveau]; // sécurité si la catégorie n'a aucune question à ce niveau
+  if (pool.length === 0) pool = questions[niveau];
 
   let restantes = pool.filter(q => !questionsDejaPosees[niveau].includes(q));
 
-  // S'il ne reste pas assez de questions "neuves", on relance le stock complet du niveau (dans cette catégorie)
   if (restantes.length < Math.min(NOMBRE_QUESTIONS_PAR_PARTIE, pool.length)) {
     questionsDejaPosees[niveau] = [];
     restantes = pool;
@@ -852,7 +1285,7 @@ function afficherQuestion() {
 
   const contenu = document.getElementById("question-content");
   contenu.classList.remove("sortie-gauche", "sortie-haut", "sortie-bas", "entree-droite", "entree-bas", "entree-haut");
-  void contenu.offsetWidth; // force le navigateur à repartir de zéro avant de rejouer l'animation
+  void contenu.offsetWidth;
   const classeEntree = directionTransition === "gauche" ? "entree-droite" : directionTransition === "haut" ? "entree-bas" : "entree-haut";
   contenu.classList.add(classeEntree);
 
@@ -901,7 +1334,7 @@ function avancerQuestion() {
     } else {
       terminerQuiz();
     }
-  }, 350); // laisse le temps à l'animation de sortie de se jouer
+  }, 350);
 }
 
 function passerALaSuite(delai) {
@@ -980,7 +1413,6 @@ function repondre(lettreChoisie, btnClique) {
 
   questionsDejaPosees[niveauActuel].push(q);
 
-  // Le délai s'adapte à la longueur du texte lu, pour laisser le temps à la voix de finir
   const nombreMots = texteALire.split(" ").length;
   const delaiCalcule = Math.max(3500, nombreMots * 550);
 
@@ -1018,6 +1450,567 @@ function rejouerMemeNiveau() {
 
 function retourNiveaux() {
   afficher("choix-niveau");
+}
+
+/* ===================== MOTS MÊLÉS BIBLIQUES ===================== */
+
+const MM_THEMES = {
+  "Genèse": {
+    1: ["ADAM","EVE","NOE","SARA"],
+    2: ["ADAM","EVE","NOE","SARA","ISAAC","JACOB"],
+    3: ["ADAM","EVE","NOE","SARA","ISAAC","JACOB","JOSEPH","MOISE","ESAU","ABRAHAM"],
+  },
+  "Fruits de l'Esprit": {
+    1: ["JOIE","PAIX","AMOUR","BONTE"],
+    2: ["JOIE","PAIX","AMOUR","BONTE","PATIENCE","DOUCEUR"],
+    3: ["JOIE","PAIX","AMOUR","BONTE","PATIENCE","DOUCEUR","FIDELITE","MAITRISE","BENIGNITE"],
+  },
+  "Nouveau Testament": {
+    1: ["MARC","LUC","JEAN","ACTES"],
+    2: ["MARC","LUC","JEAN","ACTES","MATTHIEU","ROMAINS"],
+    3: ["MARC","LUC","JEAN","ACTES","MATTHIEU","ROMAINS","GALATES","JACQUES","APOCALYPSE"],
+  },
+  "Apôtres": {
+    1: ["PIERRE","ANDRE","JEAN","SIMON"],
+    2: ["PIERRE","ANDRE","JEAN","SIMON","JACQUES","THOMAS"],
+    3: ["PIERRE","ANDRE","JEAN","SIMON","JACQUES","THOMAS","PHILIPPE","MATTHIEU","JUDE","BARTHELEMY"],
+  },
+  "Lieux bibliques": {
+    1: ["EGYPTE","CANAAN","SINAI","JERICHO"],
+    2: ["EGYPTE","CANAAN","SINAI","JERICHO","GALILEE","JORDAIN"],
+    3: ["EGYPTE","CANAAN","SINAI","JERICHO","GALILEE","JORDAIN","JERUSALEM","BETHLEEM","NAZARETH","SAMARIE"],
+  },
+};
+
+const MM_LEVEL_GRID_SIZE = { 1: 7, 2: 9, 3: 11 };
+const MM_TIME_LIMITS = { 1: 70, 2: 120, 3: 180 };
+const MM_COLORS = ['#7160dd','#ff9d2e','#2fb3a3','#4b3aa4','#e0678f','#5590e8','#c98f2f','#8a6fe0'];
+const MM_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+const MM_BADGES_DEF = {
+  first_word: { name:'Premier mot', desc:'Trouver ton tout premier mot', icon:'🔍' },
+  no_mistake: { name:'Sans faute', desc:'Terminer une grille sans aucune erreur', icon:'🎯' },
+  speedy:     { name:'Éclair', desc:'Terminer un niveau 3 en moins de 90 secondes', icon:'⚡' },
+  collector:  { name:'Collectionneur', desc:'Terminer le niveau 3 de tous les thèmes', icon:'📚' },
+};
+
+let mmGrid = [];
+let mmPlacedWords = [];
+let mmFoundWords = new Set();
+let mmCurrentTheme = Object.keys(MM_THEMES)[0];
+let mmCurrentLevel = 1;
+let mmUnlockedLevel = 1;
+let mmGridSize = MM_LEVEL_GRID_SIZE[1];
+let mmTimerInterval = null;
+let mmSecondsElapsed = 0;
+let mmWrongCount = 0;
+let mmTimedMode = false;
+let mmSoundOn = true;
+
+try{ const s = localStorage.getItem('motsmeles_unlocked_level'); if(s) mmUnlockedLevel = Math.max(1, Math.min(3, parseInt(s,10) || 1)); } catch(e){}
+try{ mmTimedMode = localStorage.getItem('motsmeles_timed_mode') === '1'; } catch(e){}
+try{ mmSoundOn = localStorage.getItem('motsmeles_sound') !== 'off'; } catch(e){}
+
+let mmBestScores = {};
+try{ mmBestScores = JSON.parse(localStorage.getItem('motsmeles_best_scores') || '{}'); } catch(e){ mmBestScores = {}; }
+let mmEarnedBadges = new Set();
+try{ mmEarnedBadges = new Set(JSON.parse(localStorage.getItem('motsmeles_badges') || '[]')); } catch(e){}
+let mmLvl3DoneThemes = new Set();
+try{ mmLvl3DoneThemes = new Set(JSON.parse(localStorage.getItem('motsmeles_lvl3_themes') || '[]')); } catch(e){}
+
+const mmGridEl = document.getElementById('mmGrid');
+const mmWordListEl = document.getElementById('mmWordList');
+const mmTabsEl = document.getElementById('mmTabs');
+const mmLevelsEl = document.getElementById('mmLevels');
+const mmTimerNumEl = document.getElementById('mmTimerNum');
+const mmProgressCountEl = document.getElementById('mmProgressCount');
+const mmProgressFillEl = document.getElementById('mmProgressFill');
+const mmWinBannerEl = document.getElementById('mmWinBanner');
+const mmWinMsgEl = document.getElementById('mmWinMsg');
+const mmWinTimeEl = document.getElementById('mmWinTime');
+const mmNewGridBtn = document.getElementById('mmNewGridBtn');
+const mmNextLevelBtn = document.getElementById('mmNextLevelBtn');
+const mmShareBtn = document.getElementById('mmShareBtn');
+const mmRetryBtn = document.getElementById('mmRetryBtn');
+const mmHintBtn = document.getElementById('mmHintBtn');
+const mmWelcomeModal = document.getElementById('mmWelcomeModal');
+const mmCloseWelcomeBtn = document.getElementById('mmCloseWelcomeBtn');
+const mmScoresBtn = document.getElementById('mmScoresBtn');
+const mmScoresModal = document.getElementById('mmScoresModal');
+const mmScoresListEl = document.getElementById('mmScoresList');
+const mmCloseScoresBtn = document.getElementById('mmCloseScoresBtn');
+const mmBadgesBtn = document.getElementById('mmBadgesBtn');
+const mmBadgesModal = document.getElementById('mmBadgesModal');
+const mmBadgesListEl = document.getElementById('mmBadgesList');
+const mmCloseBadgesBtn = document.getElementById('mmCloseBadgesBtn');
+const mmTimedModeBtn = document.getElementById('mmTimedModeBtn');
+const mmSoundBtn = document.getElementById('mmSoundBtn');
+const mmToastEl = document.getElementById('mmToast');
+
+function ouvrirMotsMeles(){
+  afficher('mots-meles');
+  mmWelcomeModal.classList.remove('hidden');
+  mmNewGame();
+  lire("Cherchez, et vous trouverez, Matthieu 7 verset 7. Que ce moment de jeu soit aussi une occasion de méditer Sa Parole, un mot à la fois. Prêt à chercher ?");
+}
+function quitterMotsMeles(){
+  clearInterval(mmTimerInterval);
+  window.speechSynthesis.cancel();
+  afficher('accueil');
+}
+
+function mmApplySoundIcon(){ mmSoundBtn.textContent = mmSoundOn ? '🔊' : '🔇'; }
+mmApplySoundIcon();
+mmSoundBtn.addEventListener('click', () => {
+  mmSoundOn = !mmSoundOn;
+  try{ localStorage.setItem('motsmeles_sound', mmSoundOn ? 'on' : 'off'); } catch(e){}
+  mmApplySoundIcon();
+});
+
+function mmPlayChime(){
+  if(!mmSoundOn) return;
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(880, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.12);
+    g.gain.setValueAtTime(0.15, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.32);
+  } catch(e){}
+}
+
+let mmToastTimeout = null;
+function mmShowToast(msg){
+  mmToastEl.textContent = msg;
+  mmToastEl.classList.add('show');
+  clearTimeout(mmToastTimeout);
+  mmToastTimeout = setTimeout(() => mmToastEl.classList.remove('show'), 2600);
+}
+
+mmCloseWelcomeBtn.addEventListener('click', () => mmWelcomeModal.classList.add('hidden'));
+
+function mmSaveBestScores(){ try{ localStorage.setItem('motsmeles_best_scores', JSON.stringify(mmBestScores)); } catch(e){} }
+
+function mmRenderScores(){
+  mmScoresListEl.innerHTML = '';
+  Object.keys(MM_THEMES).forEach(th => {
+    const groupTitle = document.createElement('div');
+    groupTitle.className = 'mm-score-group-title';
+    groupTitle.textContent = th;
+    mmScoresListEl.appendChild(groupTitle);
+    [1,2,3].forEach(lvl => {
+      const key = `${th}|${lvl}`;
+      const val = mmBestScores[key];
+      const row = document.createElement('div');
+      row.className = 'mm-score-row' + (val !== undefined ? ' has-score' : '');
+      row.innerHTML = `<span>Niveau ${lvl}</span><span class="mm-score-time">${val !== undefined ? mmFormatTime(val) : '—'}</span>`;
+      mmScoresListEl.appendChild(row);
+    });
+  });
+}
+mmScoresBtn.addEventListener('click', () => { mmRenderScores(); mmScoresModal.classList.remove('hidden'); });
+mmCloseScoresBtn.addEventListener('click', () => mmScoresModal.classList.add('hidden'));
+
+function mmSaveBadges(){ try{ localStorage.setItem('motsmeles_badges', JSON.stringify([...mmEarnedBadges])); } catch(e){} }
+function mmSaveLvl3Themes(){ try{ localStorage.setItem('motsmeles_lvl3_themes', JSON.stringify([...mmLvl3DoneThemes])); } catch(e){} }
+
+function mmUnlockBadge(id){
+  if(mmEarnedBadges.has(id)) return;
+  mmEarnedBadges.add(id);
+  mmSaveBadges();
+  mmShowToast(`🏅 Nouveau badge : ${MM_BADGES_DEF[id].name}`);
+}
+
+function mmRenderBadges(){
+  mmBadgesListEl.innerHTML = '';
+  Object.keys(MM_BADGES_DEF).forEach(id => {
+    const def = MM_BADGES_DEF[id];
+    const earned = mmEarnedBadges.has(id);
+    const row = document.createElement('div');
+    row.className = 'mm-badge-row' + (earned ? ' earned' : '');
+    row.innerHTML = `<div class="mm-badge-icon">${def.icon}</div><div class="mm-badge-info"><div class="mm-name">${def.name}</div><div class="mm-desc">${def.desc}</div></div>`;
+    mmBadgesListEl.appendChild(row);
+  });
+}
+mmBadgesBtn.addEventListener('click', () => { mmRenderBadges(); mmBadgesModal.classList.remove('hidden'); });
+mmCloseBadgesBtn.addEventListener('click', () => mmBadgesModal.classList.add('hidden'));
+
+function mmUpdateTimedModeBtn(){
+  mmTimedModeBtn.textContent = mmTimedMode ? `⏱️ Contre la montre` : '⏱️ Mode libre';
+  mmTimedModeBtn.classList.toggle('active', mmTimedMode);
+}
+mmUpdateTimedModeBtn();
+mmTimedModeBtn.addEventListener('click', () => {
+  mmTimedMode = !mmTimedMode;
+  try{ localStorage.setItem('motsmeles_timed_mode', mmTimedMode ? '1' : '0'); } catch(e){}
+  mmUpdateTimedModeBtn();
+  mmNewGame();
+});
+
+function mmBuildTabs(){
+  mmTabsEl.innerHTML = '';
+  Object.keys(MM_THEMES).forEach(th => {
+    const tab = document.createElement('button');
+    tab.className = 'mm-tab' + (th === mmCurrentTheme ? ' active' : '');
+    tab.textContent = th;
+    tab.addEventListener('click', () => {
+      mmCurrentTheme = th;
+      mmBuildTabs();
+      mmNewGame();
+    });
+    mmTabsEl.appendChild(tab);
+  });
+}
+
+function mmBuildLevels(){
+  mmLevelsEl.innerHTML = '';
+  [1,2,3].forEach(lvl => {
+    const btn = document.createElement('button');
+    const locked = lvl > mmUnlockedLevel;
+    const completed = lvl < mmUnlockedLevel;
+    const isActive = lvl === mmCurrentLevel;
+    btn.className = 'mm-level-pill' + (isActive ? '' : ' inactive') + (locked ? ' locked' : '') + (completed ? ' completed' : '');
+    btn.textContent = locked ? `🔒 Niveau ${lvl}` : (completed ? `✓ Niveau ${lvl}` : `Niveau ${lvl}`);
+    btn.disabled = locked;
+    btn.addEventListener('click', () => {
+      if(locked) return;
+      mmCurrentLevel = lvl;
+      mmGridSize = MM_LEVEL_GRID_SIZE[lvl];
+      mmBuildLevels();
+      mmNewGame();
+    });
+    mmLevelsEl.appendChild(btn);
+  });
+}
+
+function mmEmptyGrid(size){ return Array.from({length: size}, () => Array(size).fill(null)); }
+
+const MM_DIRECTIONS = [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+
+function mmTryPlaceWord(word){
+  const attempts = 300;
+  for(let a=0; a<attempts; a++){
+    const dir = MM_DIRECTIONS[Math.floor(Math.random()*MM_DIRECTIONS.length)];
+    const startR = Math.floor(Math.random()*mmGridSize);
+    const startC = Math.floor(Math.random()*mmGridSize);
+    const endR = startR + dir[0]*(word.length-1);
+    const endC = startC + dir[1]*(word.length-1);
+    if(endR < 0 || endR >= mmGridSize || endC < 0 || endC >= mmGridSize) continue;
+
+    let ok = true;
+    const cells = [];
+    for(let i=0;i<word.length;i++){
+      const r = startR + dir[0]*i;
+      const c = startC + dir[1]*i;
+      const existing = mmGrid[r][c];
+      if(existing !== null && existing !== word[i]){ ok = false; break; }
+      cells.push([r,c]);
+    }
+    if(!ok) continue;
+
+    cells.forEach(([r,c], i) => { mmGrid[r][c] = word[i]; });
+    return cells;
+  }
+  return null;
+}
+
+function mmGeneratePuzzle(){
+  mmGrid = mmEmptyGrid(mmGridSize);
+  mmPlacedWords = [];
+  const words = [...MM_THEMES[mmCurrentTheme][mmCurrentLevel]].sort(() => Math.random()-0.5).sort((a,b) => b.length - a.length);
+  words.forEach((word, idx) => {
+    const cells = mmTryPlaceWord(word);
+    if(cells) mmPlacedWords.push({ word, cells, color: MM_COLORS[idx % MM_COLORS.length] });
+  });
+  for(let r=0;r<mmGridSize;r++){
+    for(let c=0;c<mmGridSize;c++){
+      if(mmGrid[r][c] === null) mmGrid[r][c] = MM_ALPHABET[Math.floor(Math.random()*MM_ALPHABET.length)];
+    }
+  }
+}
+
+function mmRenderGrid(){
+  mmGridEl.innerHTML = '';
+  mmGridEl.style.gridTemplateColumns = `repeat(${mmGridSize}, 1fr)`;
+  mmGridEl.style.gridTemplateRows = `repeat(${mmGridSize}, 1fr)`;
+  for(let r=0;r<mmGridSize;r++){
+    for(let c=0;c<mmGridSize;c++){
+      const cell = document.createElement('div');
+      cell.className = 'mm-cell';
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+      cell.textContent = mmGrid[r][c];
+      mmGridEl.appendChild(cell);
+    }
+  }
+}
+
+function mmRenderWordList(){
+  mmWordListEl.innerHTML = '';
+  mmPlacedWords.forEach(pw => {
+    const li = document.createElement('li');
+    li.dataset.word = pw.word;
+    const swatch = document.createElement('div');
+    swatch.className = 'mm-swatch';
+    const label = document.createElement('span');
+    label.textContent = pw.word;
+    li.appendChild(swatch);
+    li.appendChild(label);
+    mmWordListEl.appendChild(li);
+  });
+}
+
+function mmUpdateProgress(){
+  const total = mmPlacedWords.length;
+  const found = mmFoundWords.size;
+  mmProgressCountEl.textContent = `${found} / ${total}`;
+  mmProgressFillEl.style.width = total ? `${(found/total)*100}%` : '0%';
+  mmHintBtn.disabled = found >= total;
+}
+
+function mmFormatTime(sec){
+  const clamped = Math.max(0, sec);
+  const m = String(Math.floor(clamped/60)).padStart(2,'0');
+  const s = String(clamped%60).padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+function mmUpdateTimerDisplay(){
+  if(mmTimedMode){
+    const remaining = Math.max(0, MM_TIME_LIMITS[mmCurrentLevel] - mmSecondsElapsed);
+    mmTimerNumEl.textContent = mmFormatTime(remaining);
+  } else {
+    mmTimerNumEl.textContent = mmFormatTime(mmSecondsElapsed);
+  }
+}
+
+function mmTickTimer(){
+  mmSecondsElapsed++;
+  mmUpdateTimerDisplay();
+  if(mmTimedMode && mmSecondsElapsed >= MM_TIME_LIMITS[mmCurrentLevel]){
+    clearInterval(mmTimerInterval);
+    mmTriggerTimeout();
+  }
+}
+
+function mmStartTimer(){
+  clearInterval(mmTimerInterval);
+  mmSecondsElapsed = 0;
+  mmUpdateTimerDisplay();
+  mmTimerInterval = setInterval(mmTickTimer, 1000);
+}
+
+function mmNewGame(){
+  mmFoundWords = new Set();
+  mmWrongCount = 0;
+  mmWinBannerEl.classList.remove('show');
+  mmNewGridBtn.style.display = '';
+  mmHintBtn.style.display = '';
+  mmGeneratePuzzle();
+  mmRenderGrid();
+  mmRenderWordList();
+  mmUpdateProgress();
+  mmStartTimer();
+}
+
+function mmTriggerTimeout(){
+  mmNewGridBtn.style.display = 'none';
+  mmHintBtn.style.display = 'none';
+  mmWinMsgEl.textContent = '⏰ Temps écoulé !';
+  mmWinTimeEl.textContent = `tu as trouvé ${mmFoundWords.size} / ${mmPlacedWords.length} mots`;
+  mmNextLevelBtn.style.display = 'none';
+  mmShareBtn.style.display = 'none';
+  mmRetryBtn.style.display = '';
+  mmWinBannerEl.classList.add('show');
+  lire("Temps écoulé ! " + mmWinTimeEl.textContent);
+}
+
+function mmOnLevelComplete(){
+  clearInterval(mmTimerInterval);
+  mmNewGridBtn.style.display = 'none';
+  mmHintBtn.style.display = 'none';
+  mmRetryBtn.style.display = 'none';
+  mmShareBtn.style.display = '';
+
+  const scoreKey = `${mmCurrentTheme}|${mmCurrentLevel}`;
+  const prevBest = mmBestScores[scoreKey];
+  let isRecord = false;
+  if(prevBest === undefined || mmSecondsElapsed < prevBest){
+    mmBestScores[scoreKey] = mmSecondsElapsed;
+    mmSaveBestScores();
+    isRecord = true;
+  }
+  mmWinTimeEl.textContent = isRecord
+    ? `🏆 nouveau record : ${mmFormatTime(mmSecondsElapsed)}`
+    : `terminé en ${mmFormatTime(mmSecondsElapsed)} (record : ${mmFormatTime(prevBest)})`;
+
+  if(mmWrongCount === 0) mmUnlockBadge('no_mistake');
+  if(mmCurrentLevel === 3 && mmSecondsElapsed < 90) mmUnlockBadge('speedy');
+  if(mmCurrentLevel === 3){
+    mmLvl3DoneThemes.add(mmCurrentTheme);
+    mmSaveLvl3Themes();
+    if(mmLvl3DoneThemes.size === Object.keys(MM_THEMES).length) mmUnlockBadge('collector');
+  }
+
+  if(mmCurrentLevel === mmUnlockedLevel && mmCurrentLevel < 3){
+    mmUnlockedLevel = mmCurrentLevel + 1;
+    try{ localStorage.setItem('motsmeles_unlocked_level', String(mmUnlockedLevel)); } catch(e){}
+    mmBuildLevels();
+    mmWinMsgEl.textContent = '🎉 Niveau complété !';
+    mmNextLevelBtn.style.display = '';
+  } else if(mmCurrentLevel === 3){
+    mmWinMsgEl.textContent = '🏅 Tous les niveaux complétés !';
+    mmNextLevelBtn.style.display = 'none';
+  } else {
+    mmWinMsgEl.textContent = '🎉 Niveau complété !';
+    mmNextLevelBtn.style.display = mmCurrentLevel < 3 ? '' : 'none';
+  }
+  mmWinBannerEl.classList.add('show');
+}
+
+mmNextLevelBtn.addEventListener('click', () => {
+  if(mmCurrentLevel < 3){
+    mmCurrentLevel += 1;
+    mmGridSize = MM_LEVEL_GRID_SIZE[mmCurrentLevel];
+    mmBuildLevels();
+    mmNewGame();
+  }
+});
+mmRetryBtn.addEventListener('click', () => mmNewGame());
+
+function mmCellAt(r,c){ return mmGridEl.querySelector(`.mm-cell[data-r="${r}"][data-c="${c}"]`); }
+
+mmHintBtn.addEventListener('click', () => {
+  const remaining = mmPlacedWords.filter(pw => !mmFoundWords.has(pw.word));
+  if(remaining.length === 0) return;
+  const pick = remaining[Math.floor(Math.random()*remaining.length)];
+  const [r,c] = pick.cells[0];
+  const el = mmCellAt(r,c);
+  el.classList.remove('hint-flash');
+  void el.offsetWidth;
+  el.classList.add('hint-flash');
+  setTimeout(() => el.classList.remove('hint-flash'), 1500);
+
+  mmSecondsElapsed += 15;
+  mmUpdateTimerDisplay();
+  if(mmTimedMode && mmSecondsElapsed >= MM_TIME_LIMITS[mmCurrentLevel]){
+    clearInterval(mmTimerInterval);
+    mmTriggerTimeout();
+  }
+});
+
+async function mmShareScore(){
+  const text = `J'ai trouvé les mots du thème "${mmCurrentTheme}" (niveau ${mmCurrentLevel}) en ${mmFormatTime(mmSecondsElapsed)} sur Mots Mêlés Bibliques 🧩✝️`;
+  if(navigator.share){
+    try{ await navigator.share({ text }); } catch(e){}
+  } else if(navigator.clipboard){
+    try{ await navigator.clipboard.writeText(text); mmShowToast('📋 Score copié dans le presse-papiers'); }
+    catch(e){ mmShowToast('Impossible de copier le score'); }
+  } else {
+    mmShowToast(text);
+  }
+}
+mmShareBtn.addEventListener('click', mmShareScore);
+
+let mmSelecting = false;
+let mmStartCell = null;
+let mmCurrentPathCells = [];
+
+function mmClearTempHighlight(){
+  mmCurrentPathCells.forEach(el => el.classList.remove('temp-select'));
+  mmCurrentPathCells = [];
+}
+
+function mmPathFrom(r0,c0,r1,c1){
+  const dr = r1 - r0, dc = c1 - c0;
+  const steps = Math.max(Math.abs(dr), Math.abs(dc));
+  if(steps === 0) return [[r0,c0]];
+  const sr = Math.sign(dr), sc = Math.sign(dc);
+  if(dr !== 0 && dc !== 0 && Math.abs(dr) !== Math.abs(dc)) return null;
+  const cells = [];
+  for(let i=0;i<=steps;i++) cells.push([r0 + sr*i, c0 + sc*i]);
+  return cells;
+}
+
+function mmHandleStart(r,c){
+  mmSelecting = true;
+  mmStartCell = [r,c];
+  mmClearTempHighlight();
+  const el = mmCellAt(r,c);
+  el.classList.add('temp-select');
+  mmCurrentPathCells = [el];
+}
+
+function mmHandleMove(r,c){
+  if(!mmSelecting) return;
+  const path = mmPathFrom(mmStartCell[0], mmStartCell[1], r, c);
+  if(!path) return;
+  mmClearTempHighlight();
+  mmCurrentPathCells = path.map(([pr,pc]) => mmCellAt(pr,pc));
+  mmCurrentPathCells.forEach(el => el.classList.add('temp-select'));
+}
+
+function mmHandleEnd(){
+  if(!mmSelecting) return;
+  mmSelecting = false;
+  const letters = mmCurrentPathCells.map(el => el.textContent).join('');
+  const reversed = letters.split('').reverse().join('');
+  const isMultiCell = mmCurrentPathCells.length > 1;
+
+  const match = mmPlacedWords.find(pw => !mmFoundWords.has(pw.word) && (pw.word === letters || pw.word === reversed));
+  if(match){
+    mmFoundWords.add(match.word);
+    mmCurrentPathCells.forEach(el => {
+      el.classList.remove('temp-select');
+      el.classList.add('found');
+      el.style.background = match.color;
+    });
+    const li = mmWordListEl.querySelector(`li[data-word="${match.word}"]`);
+    if(li){
+      li.classList.add('done');
+      li.querySelector('.mm-swatch').style.background = match.color;
+    }
+    mmPlayChime();
+    if(!mmEarnedBadges.has('first_word')) mmUnlockBadge('first_word');
+    mmUpdateProgress();
+    if(mmFoundWords.size === mmPlacedWords.length) mmOnLevelComplete();
+  } else {
+    if(isMultiCell) mmWrongCount++;
+    mmClearTempHighlight();
+  }
+  mmCurrentPathCells = [];
+}
+
+function mmCellFromPoint(x,y){
+  const el = document.elementFromPoint(x,y);
+  if(el && el.classList.contains('mm-cell')) return [+el.dataset.r, +el.dataset.c];
+  return null;
+}
+
+mmGridEl.addEventListener('pointerdown', (e) => {
+  const rc = mmCellFromPoint(e.clientX, e.clientY);
+  if(rc) mmHandleStart(rc[0], rc[1]);
+});
+window.addEventListener('pointermove', (e) => {
+  if(!mmSelecting) return;
+  const rc = mmCellFromPoint(e.clientX, e.clientY);
+  if(rc) mmHandleMove(rc[0], rc[1]);
+});
+window.addEventListener('pointerup', mmHandleEnd);
+
+mmNewGridBtn.addEventListener('click', mmNewGame);
+
+mmBuildTabs();
+mmBuildLevels();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  });
 }
 </script>
 
