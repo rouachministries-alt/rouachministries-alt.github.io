@@ -1,0 +1,16 @@
+{
+  "name": "Rouachministries - Quiz Biblique",
+  "short_name": "Rouachministries",
+  "description": "Quiz de culture biblique et mots mêlés bibliques",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#392f7a",
+  "theme_color": "#392f7a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
