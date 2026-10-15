@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rouachministries-alt.github.io/sitemap.xml

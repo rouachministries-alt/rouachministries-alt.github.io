@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz de culture biblique</title>
+<title>Quiz de culture biblique – Rouachministries</title>
+<meta name="description" content="Quiz biblique gratuit (Ancien et Nouveau Testament, 3 niveaux), défi du jour, mots mêlés bibliques et guides pour mieux connaître la Bible.">
+<meta name="google-adsense-account" content="ca-pub-7313613931904605">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#392f7a">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Rouachministries">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7313613931904605" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Playfair+Display:ital@1&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
@@ -164,6 +165,18 @@
     font-weight: 800;
   }
   p.rules { color: #444; line-height: 1.6; }
+  .guides-accueil{ margin-top:26px; padding-top:20px; border-top:2px dashed #ddd6ff; }
+  .guides-accueil h2{ text-align:center; color:#392f7a; font-size:20px; margin:0 0 6px; }
+  .guides-accueil ul{ list-style:none; padding:0; margin:12px 0 0; display:grid; gap:7px; }
+  .guides-accueil li a{ display:block; padding:10px 14px; border-radius:12px; background:#f3f0ff; border:1px solid #ddd6ff; color:#392f7a; font-weight:600; font-size:14px; text-decoration:none; }
+  .guides-accueil li a:hover{ background:#e8e2ff; }
+  .tous-guides{ color:#6d5bd0; font-weight:700; }
+  .pied-liens{ text-align:center; margin-top:22px; font-size:13px; color:#777; line-height:1.9; }
+  .pied-liens a{ color:#6d5bd0; }
+  body.sombre .guides-accueil{ border-top-color:#3a3363; }
+  body.sombre .guides-accueil h2{ color:#b9aaff; }
+  body.sombre .guides-accueil li a{ background:#2a2545; border-color:#3a3363; color:#e6e1ff; }
+  body.sombre .pied-liens, body.sombre .pied-liens a{ color:#b9aaff; }
   .btn {
     display: block;
     width: 100%;
@@ -709,6 +722,33 @@
     <button class="btn" style="background:linear-gradient(135deg, #6d5bd0, #8b6fe0);" onclick="ouvrirDefiDuJour()">📅 Défi du jour</button>
     <button class="btn" style="background:linear-gradient(135deg, #ff9800, #ffb74d);" onclick="afficherBadges()">🏅 Mes badges</button>
     <button class="btn" style="background:linear-gradient(135deg, #4b3aa4, #7160dd);" onclick="ouvrirMotsMeles()">🧩 Mots mêlés bibliques</button>
+
+    <section class="guides-accueil">
+      <h2>📚 Mieux connaître la Bible</h2>
+      <p class="rules">Des guides clairs pour découvrir les livres, les personnages et les grands récits de la Bible, et progresser au quiz.</p>
+      <ul>
+        <li><a href="guides/comment-est-organisee-la-bible.html">Comment est organisée la Bible ?</a></li>
+        <li><a href="guides/les-grandes-etapes-de-l-ancien-testament.html">Les grandes étapes de l'Ancien Testament</a></li>
+        <li><a href="guides/panorama-du-nouveau-testament.html">Panorama du Nouveau Testament</a></li>
+        <li><a href="guides/les-quatre-evangiles.html">Les quatre Évangiles</a></li>
+        <li><a href="guides/moise-et-l-exode.html">Moïse et la sortie d'Égypte</a></li>
+        <li><a href="guides/le-roi-david.html">David, du berger au roi</a></li>
+        <li><a href="guides/les-douze-apotres.html">Qui étaient les douze apôtres ?</a></li>
+        <li><a href="guides/l-apotre-paul.html">L'apôtre Paul</a></li>
+        <li><a href="guides/les-paraboles-de-jesus.html">Les paraboles de Jésus</a></li>
+        <li><a href="guides/idees-recues-sur-la-bible.html">Idées reçues sur la Bible</a></li>
+        <li><a href="guides/bien-commencer-la-lecture-de-la-bible.html">Bien commencer la lecture de la Bible</a></li>
+      </ul>
+      <p style="text-align:center;margin:10px 0 0;"><a class="tous-guides" href="guides/index.html">Voir tous les guides →</a></p>
+    </section>
+
+    <nav class="pied-liens">
+      <a href="guides/index.html">Guides</a> ·
+      <a href="a-propos.html">À propos</a> ·
+      <a href="contact.html">Contact</a> ·
+      <a href="confidentialite.html">Confidentialité</a>
+      <div>© 2026 Rouachministries</div>
+    </nav>
   </div>
 
   <!-- CHOIX DE LA CATÉGORIE -->
